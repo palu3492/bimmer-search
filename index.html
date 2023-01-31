@@ -19,10 +19,13 @@
             <label>Radius</label>
             <input v-model="filters.radius" type="text">
             <br/>
+            <label>Options (comma separated)</label>
+            <input v-model="filters.options" type="text" placeholder="5AU, ZMP">
+            <br/>
             <button @click="fetchInventory">Search</button>
 
             <p v-show="loading">Loading...</p>
-            <div v-for="vehicle in allInventory" :key="vehicle.vin">
+            <div v-for="vehicle in filteredInventory" :key="vehicle.vin">
                 {{ vehicle.vdpUrl }}
             </div>
         </div>

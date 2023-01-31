@@ -8,12 +8,13 @@ createApp({
       info: null,
       url: atob("aHR0cHM6Ly9pbnZlbnRvcnlzZXJ2aWNlcy5ibXdkZWFsZXJwcm9ncmFtcy5jb20v"),
       token: "",
-      inventory: {},
+      filteredInventory: [],
       allInventory: [],
       loading: false,
       filters: {
         radius: "50",
-        zip: ""
+        zip: "",
+        options: ""
       },
       search: {
         pageIndex: 0,
@@ -136,34 +137,36 @@ createApp({
             }
             Promise.all(promises).then(() => {
               console.log("All results have been fetched")
+              this.filterAllInventory()
               this.loading = false;
             })
           });
       });
-
-
-      // while(1) {
-      //   new Promise(resolve => {
-      //     this.getInventory()
-      //       .then( () => {
-      //         // resolve();
-      //       });
-      //   });
-      //   console.log("test")
-      //   break
-      // }
-
-      // all_records = []
-
-      // while results_index < number_of_pages * page_size:
-      //     print("Fetching %d records for page %d" % (page_size, page_index + 1))
-
-      
     },
     test() {
       this.filters.zip = 55115;
+      this.filters.radius = 500;
+      this.filters.options = "5AU";
       this.fetchInventory();
+    },
+    filterAllInventory() {
+      console.log("Filtering inventory")
+      let options = this.filters.options.split(", ")
+      this.filteredInventory = this.allInventory.filter(vehicle => {
+        includesOptions = true;
+        options.forEach(option => {
+          if(!vehicle.allCodes || !vehicle.allCodes.includes(option)) {
+            includesOptions = false
+          }
+        })
+        return includesOptions
+      })
     }
+  },
+  watch: {
+    // allInventory(oldInventory, newInventory) {
+      
+    // }
   },
   mounted() {
     this.getToken()
