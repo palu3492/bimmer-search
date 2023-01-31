@@ -90,8 +90,8 @@ def get_token():
     }
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json",
-        "Host": host
+        "Accept": "application/json"
+        # "Host": host
     }
     url = URL + "token"
     response = send_request(url=url, request_type=POST, payload=payload, headers=headers)
