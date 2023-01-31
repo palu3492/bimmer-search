@@ -10,10 +10,19 @@
 
         <title>Bimmer Search</title>
       </head>
-      <body data-new-gr-c-s-check-loaded="14.1094.0" data-gr-ext-installed="">
+      <body>
         <h1>Bimmer Search</h1>
         <div id="app">
-            <div v-for="vehicle in inventory.vehicles" :key="vehicle.vin">
+            <label>Zip</label>
+            <input v-model="filters.zip" type="text">
+            <br/>
+            <label>Radius</label>
+            <input v-model="filters.radius" type="text">
+            <br/>
+            <button @click="fetchInventory">Search</button>
+
+            <p v-show="loading">Loading...</p>
+            <div v-for="vehicle in allInventory" :key="vehicle.vin">
                 {{ vehicle.vdpUrl }}
             </div>
         </div>
