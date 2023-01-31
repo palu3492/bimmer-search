@@ -8,13 +8,14 @@
         <link rel="shortcut icon" type="image/jpg" href="../static/assets/favicon.png">
         <link rel="stylesheet" href=""> -->
 
-
         <title>Bimmer Search</title>
       </head>
       <body data-new-gr-c-s-check-loaded="14.1094.0" data-gr-ext-installed="">
-        
+        <h1>Bimmer Search</h1>
         <div id="app">
-            {{ token }}
+            <div v-for="vehicle in inventory.vehicles" :key="vehicle.vin">
+                {{ vehicle.vdpUrl }}
+            </div>
         </div>
 
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>

@@ -7,7 +7,8 @@ createApp({
       message: 'Only a test',
       info: null,
       url: atob("aHR0cHM6Ly9pbnZlbnRvcnlzZXJ2aWNlcy5ibXdkZWFsZXJwcm9ncmFtcy5jb20v"),
-      token: ""
+      token: "",
+      inventory: {}
     }
   },
   methods: {
@@ -49,8 +50,10 @@ createApp({
         "includeDealers":true,
         "includeVehicles":true,
         "filters":[
-          {"name":"Series","values":["3 Series"]},{"name":"Year","values":["2019","2020","2021","2022"]},
-          {"name":"Option","values":[]},{name: "Model", values: ["330i xDrive"]}
+          {"name":"Series","values":["3 Series"]},
+          {"name":"Year","values":["2019","2020","2021","2022"]},
+          {"name":"Option","values":[]},
+          {name: "Model", values: ["330i xDrive"]}
         ]
       }
       let headers = {
@@ -65,9 +68,10 @@ createApp({
             headers: headers
         })
         .then(response => {
-          console.log(JSON.stringify(response, null, 4))
+          // console.log(JSON.stringify(response, null, 4))
           // this.token = response.data.access_token
           // console.log(this.token)
+          this.inventory = response.data
         })
     }
   },
