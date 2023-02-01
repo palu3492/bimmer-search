@@ -7,9 +7,11 @@ createApp({
       message: 'Only a test',
       info: null,
       url: atob("aHR0cHM6Ly9pbnZlbnRvcnlzZXJ2aWNlcy5ibXdkZWFsZXJwcm9ncmFtcy5jb20v"),
+      imageUrl: atob("aHR0cHM6Ly9ibXctaW52ZW50b3J5LWFzc2V0cy1wcm9kLmF6dXJlZWRnZS5uZXQvaW1hZ2VzLw=="),
       token: "",
       filteredInventory: [],
       allInventory: [],
+      dealers: {},
       loading: false,
       filters: {
         radius: "50",
@@ -97,6 +99,9 @@ createApp({
     },
     processInventory(inventory) {
       this.allInventory = this.allInventory.concat(inventory.vehicles)
+      inventory.dealers.forEach( dealer => {
+        this.dealers[dealer.dealerCode] = dealer
+      });
       if (this.search.pageIndex == 0) {
         let totalRecords = inventory.totalRecords
         console.log("Total records", totalRecords)
@@ -146,7 +151,7 @@ createApp({
     test() {
       this.filters.zip = 55115;
       this.filters.radius = 500;
-      this.filters.options = "5AU";
+      // this.filters.options = "5AU";
       this.fetchInventory();
     },
     filterAllInventory() {
@@ -161,6 +166,12 @@ createApp({
         })
         return includesOptions
       })
+    },
+    vehicleImage(vehicle) {
+      if(!vehicle.photos || vehicle.photos.length == 0) {
+        return ""
+      }
+      return this.imageUrl + vehicle.photos[0]
     }
   },
   watch: {

@@ -4,13 +4,24 @@
   src: url('fonts/BMWTypeNextLatin-Bold.woff2');
 }
 
+@font-face {
+  font-family: "BMWTypeNextLight";
+  src: url('fonts/BMWTypeNextLatin-Light.woff2');
+}
+
+@font-face {
+  font-family: "BMWTypeNextThin";
+  src: url('fonts/BMWTypeNextLatin-Thin.woff2');
+}
+
 body {
-    background: #f6f6f6
+    background: #f6f6f6;
+    font-family: BMWTypeNextLight,Helvetica Neue,-apple-system,"system-ui",BlinkMacSystemFont,serif;
 }
 
 .header {
     height: 100px;
-    font-family: BMWTypeNext,Helvetica Neue,-apple-system,"system-ui",BlinkMacSystemFont,serif;
+    font-family: BMWTypeNext;
     color: #4c4c4c;
     align-items: center;
     margin: 0px;
@@ -30,5 +41,21 @@ body {
 
 .sidebar {
     background: white;
-    height: calc(100vh - 170px);
+}
+
+.content {
+    min-height: calc(100vh - 170px);
+}
+
+.vehicle-title {
+    font-family: BMWTypeNext;
+}
+
+.vehicle-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.vehicle-info p {
+    margin: 0px;
 }

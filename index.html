@@ -17,27 +17,70 @@
             </div>
             <div class="gray-bar"></div>
             <div id="app" class="container-fluid">
-                <div class="row">
-                    <div class="col content-top">
+                <div class="row content-top">
+                    <div class="col-2 d-flex align-items-center">
+                        <h5 class="m-0">Filters</h5>
+                    </div>
+                    <div class="col-9 d-flex flex-column" style="font-size: 0.9em;" v-if="allInventory.length > 0">
+                        <p class="m-0 py-1">Total Results {{ allInventory.length }}</p>
+                        <p class="m-0">Filtered Results {{ filteredInventory.length }}</p>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-3 sidebar">
-                        <label>Zip</label>
-                        <input v-model="filters.zip" type="text">
-                        <br/>
-                        <label>Radius</label>
-                        <input v-model="filters.radius" type="text">
-                        <br/>
-                        <label>Options (comma separated)</label>
-                        <input v-model="filters.options" type="text" placeholder="5AU, ZMP">
-                        <br/>
-                        <button @click="fetchInventory">Search</button>
+                    <div class="col-2 sidebar">
+
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">Zip</span>
+                          </div>
+                          <input v-model="filters.zip" type="text" class="form-control" :disabled="loading">
+                        </div>
+
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">Radius</span>
+                          </div>
+                          <input v-model="filters.radius" type="text" class="form-control"  :disabled="loading">
+                        </div>
+
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">Options</span>
+                          </div>
+                          <input v-model="filters.options" type="text" class="form-control"  :disabled="loading">
+                        </div>
+
+                        <button @click="fetchInventory" class="btn btn-outline-dark">Search</button>
+
+                        <p style="position: fixed; bottom: 0; font-size: 0.8em;">Powered by Linkbus</p>
                     </div>
                     <div class="col-9 content">
                         <p v-show="loading">Loading...</p>
-                        <div v-for="vehicle in filteredInventory" :key="vehicle.vin">
-                            {{ vehicle.vdpUrl }}
+                        <div class="card-columns" style="padding-top: 15px;">
+                            <div class="card" v-for="vehicle in filteredInventory" :key="vehicle.vin">
+                                <img class="card-img-top" :src="vehicleImage(vehicle)" alt="Vehicle image">
+                                <div class="card-body">
+                                    <div class="card-title">
+                                        <h5 class="vehicle-title">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.modelSeries }}</h5>
+                                        <p class="m-0 vehicle-desc">{{ vehicle.modelDescription }}</p>
+                                    </div>
+                                    <div class="card-text vehicle-info">
+                                        <div>
+                                            <p>Dealer Price</p>
+                                            <p>${{ vehicle.internetPrice }}</p>
+                                        </div>
+                                        <div>
+                                            <p>Miles</p>
+                                            <p>{{ vehicle.odometer }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a :href="vehicle.vdpUrl"  target="_blank">
+                                    <div class="card-footer">
+                                        <small class="text-muted">{{ dealers[vehicle.dealerCode].dealerName }}</small>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
