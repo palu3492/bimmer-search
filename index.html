@@ -4,29 +4,43 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         
-        <!-- <link rel="stylesheet" href="../static/style/style.css">
-        <link rel="shortcut icon" type="image/jpg" href="../static/assets/favicon.png">
-        <link rel="stylesheet" href=""> -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" href="style.css">
+        <!-- <link rel="shortcut icon" type="image/jpg" href="../static/assets/favicon.png"> -->
 
         <title>Bimmer Search</title>
       </head>
       <body>
-        <h1>Bimmer Search</h1>
-        <div id="app">
-            <label>Zip</label>
-            <input v-model="filters.zip" type="text">
-            <br/>
-            <label>Radius</label>
-            <input v-model="filters.radius" type="text">
-            <br/>
-            <label>Options (comma separated)</label>
-            <input v-model="filters.options" type="text" placeholder="5AU, ZMP">
-            <br/>
-            <button @click="fetchInventory">Search</button>
-
-            <p v-show="loading">Loading...</p>
-            <div v-for="vehicle in filteredInventory" :key="vehicle.vin">
-                {{ vehicle.vdpUrl }}
+        <div>
+            <div class="header">
+                <h1 class="m-0 ml-5">Bimmer Search</h1>
+            </div>
+            <div class="gray-bar"></div>
+            <div id="app" class="container-fluid">
+                <div class="row">
+                    <div class="col content-top">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3 sidebar">
+                        <label>Zip</label>
+                        <input v-model="filters.zip" type="text">
+                        <br/>
+                        <label>Radius</label>
+                        <input v-model="filters.radius" type="text">
+                        <br/>
+                        <label>Options (comma separated)</label>
+                        <input v-model="filters.options" type="text" placeholder="5AU, ZMP">
+                        <br/>
+                        <button @click="fetchInventory">Search</button>
+                    </div>
+                    <div class="col-9 content">
+                        <p v-show="loading">Loading...</p>
+                        <div v-for="vehicle in filteredInventory" :key="vehicle.vin">
+                            {{ vehicle.vdpUrl }}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

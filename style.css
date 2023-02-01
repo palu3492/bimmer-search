@@ -1,0 +1,34 @@
+
+@font-face {
+  font-family: "BMWTypeNext";
+  src: url('fonts/BMWTypeNextLatin-Bold.woff2');
+}
+
+body {
+    background: #f6f6f6
+}
+
+.header {
+    height: 100px;
+    font-family: BMWTypeNext,Helvetica Neue,-apple-system,"system-ui",BlinkMacSystemFont,serif;
+    color: #4c4c4c;
+    align-items: center;
+    margin: 0px;
+    display: flex;
+    background: white;
+}
+
+.gray-bar{
+    background: #f6f6f6;
+    height: 10px;
+}
+
+.content-top {
+    background: white;
+    height: 60px;
+}
+
+.sidebar {
+    background: white;
+    height: calc(100vh - 170px);
+}
