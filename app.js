@@ -16,7 +16,7 @@ createApp({
       dealers: {},
       loading: false,
       filters: {
-        radius: "25 ",
+        radius: "25",
         zip: "55305",
         options: ""
       },
@@ -75,7 +75,8 @@ createApp({
         "includeVehicles":true,
         "filters":[
           {"name":"Series","values":["3 Series"]},
-          {"name":"Year","values":["2019","2020","2021","2022"]}
+          {"name":"Year","values":["2019","2020","2021","2022"]},
+          {"name": "Model", "values": ["330i xDrive", "330i"]}
         ]
       }
       let headers = {
