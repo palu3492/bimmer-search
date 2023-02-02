@@ -9,54 +9,62 @@
         <!-- <link rel="shortcut icon" type="image/jpg" href="../static/assets/favicon.png"> -->
 
         <title>Bimmer Search</title>
+        <!--
+              ______
+             /|_||_\`.__
+            (   _    _ _\
+            =`-(_)--(_)-' 
+            Bimmer Search
+        -->
       </head>
       <body>
-        <div>
+        <div class="d-flex flex-column" style="min-height: 100vh">
             <div class="header">
                 <h1 class="m-0 ml-5">Bimmer Search</h1>
             </div>
             <div class="gray-bar"></div>
-            <div id="app" class="container-fluid">
-                <div class="row content-top">
-                    <div class="col-2 d-flex align-items-center">
-                        <h5 class="m-0">Filters</h5>
-                    </div>
-                    <div class="col-9 d-flex flex-column" style="font-size: 0.9em;" v-if="allInventory.length > 0">
-                        <p class="m-0 py-1">Total Results {{ allInventory.length }}</p>
-                        <p class="m-0">Filtered Results {{ filteredInventory.length }}</p>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-2 sidebar">
+            <div id="app" class="container-fluid d-flex flex-column"  style="flex: 1">
+                <div class="row" style="flex: 1">
+                    <div class="col-12 col-md-3 col-lg-2 sidebar">
+                        <div class="content-top align-items-center d-flex mb-3">
+                            <h5 class="m-0 ml-3">Filters</h5>
+                        </div>
+                        <div class="sidebar-content mb-3">
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">Zip</span>
+                              </div>
+                              <input v-model="filters.zip" type="text" class="form-control" :disabled="loading">
+                            </div>
 
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text">Zip</span>
-                          </div>
-                          <input v-model="filters.zip" type="text" class="form-control" :disabled="loading">
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">Radius</span>
+                              </div>
+                              <input v-model="filters.radius" type="text" class="form-control"  :disabled="loading">
+                            </div>
+
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">Options</span>
+                              </div>
+                              <input v-model="filters.options" type="text" class="form-control"  :disabled="loading">
+                            </div>
+
+                            <button @click="fetchInventory" class="btn btn-outline-dark">Search</button>
                         </div>
 
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text">Radius</span>
-                          </div>
-                          <input v-model="filters.radius" type="text" class="form-control"  :disabled="loading">
-                        </div>
-
-                        <div class="input-group mb-3">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text">Options</span>
-                          </div>
-                          <input v-model="filters.options" type="text" class="form-control"  :disabled="loading">
-                        </div>
-
-                        <button @click="fetchInventory" class="btn btn-outline-dark">Search</button>
-
-                        <p style="position: fixed; bottom: 0; font-size: 0.8em;">Powered by Linkbus</p>
+                        <p style="position: fixed; bottom: 0; font-size: 0.8em;" class="mb-2">Powered by Linkbus</p>
                     </div>
-                    <div class="col-9 content">
+                    <div class="col-12 col-md-9 col-lg-10 content">
+                        <div class="content-top" style="">
+                            <div class="col-9 d-flex flex-column" style="font-size: 0.9em;" v-if="allInventory.length > 0">
+                                <p class="m-0 py-1">Total Results {{ allInventory.length }}</p>
+                                <p class="m-0">Filtered Results {{ filteredInventory.length }}</p>
+                            </div>
+                        </div>
                         <p v-show="loading">Loading...</p>
-                        <div class="card-columns" style="padding-top: 15px;">
+                        <div class="card-layout d-flex flex-row flex-wrap">
                             <div class="card" v-for="vehicle in filteredInventory" :key="vehicle.vin">
                                 <img class="card-img-top" :src="vehicleImage(vehicle)" alt="Vehicle image">
                                 <div class="card-body">

@@ -37,6 +37,10 @@ body {
 .content-top {
     background: white;
     height: 60px;
+    border-bottom: 1px solid #cacaca;
+    border-top: 1px solid #cacaca;
+    margin-left: -15px;
+    margin-right: -15px;
 }
 
 .sidebar {
@@ -44,7 +48,35 @@ body {
 }
 
 .content {
-    min-height: calc(100vh - 170px);
+
+}
+
+.card-layout {
+    padding-top: 15px;
+    column-gap: 15px;
+}
+
+.card {
+    margin-bottom: 1.25rem;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .card {
+        width: calc(50% - calc(15px / 2));
+    }
+}
+
+@media (min-width: 992px) {
+    .card {
+        width: calc(33.33% - calc(calc(2 * 15px) / 3));
+    }
+}
+
+@media (min-width: 2000px) {
+    .card {
+        width: calc(25% - calc(calc(3 * 15px) / 4));
+    }
 }
 
 .vehicle-title {

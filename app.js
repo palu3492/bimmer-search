@@ -150,9 +150,9 @@ createApp({
     },
     test() {
       this.filters.zip = 55115;
-      this.filters.radius = 500;
+      this.filters.radius = 50;
       // this.filters.options = "5AU";
-      this.fetchInventory();
+      // this.fetchInventory();
     },
     filterAllInventory() {
       console.log("Filtering inventory")
@@ -180,8 +180,8 @@ createApp({
     // }
   },
   mounted() {
-    this.getToken()
-    // this.test()
+    // this.getToken()
+    this.test()
     // this.getToken()
       // .then( () => {
       //   this.getInventory(0)
