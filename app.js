@@ -8,14 +8,16 @@ createApp({
       info: null,
       url: atob("aHR0cHM6Ly9pbnZlbnRvcnlzZXJ2aWNlcy5ibXdkZWFsZXJwcm9ncmFtcy5jb20v"),
       imageUrl: atob("aHR0cHM6Ly9ibXctaW52ZW50b3J5LWFzc2V0cy1wcm9kLmF6dXJlZWRnZS5uZXQvaW1hZ2VzLw=="),
+      carFaxUrl: atob("aHR0cHM6Ly93d3cuY2FyZmF4LmNvbS9WZWhpY2xlSGlzdG9yeS9wL1JlcG9ydC5jZng/cGFydG5lcj1TRFRfMCZ2aW49"),
+      bmwUrl: atob("aHR0cHM6Ly93d3cuYm13dXNhLmNvbS9jZXJ0aWZpZWQtcHJlb3duZWQtc2VhcmNoLyMvZGV0YWlsLw=="),
       token: "",
       filteredInventory: [],
       allInventory: [],
       dealers: {},
       loading: false,
       filters: {
-        radius: "50",
-        zip: "",
+        radius: "25 ",
+        zip: "55305",
         options: ""
       },
       search: {
@@ -23,7 +25,8 @@ createApp({
         // resultIndex: 0,
         numberOfPages: 1,
         pageSize: 100
-      }
+      },
+      formatter: new Intl.NumberFormat()
     }
   },
   methods: {
@@ -72,9 +75,7 @@ createApp({
         "includeVehicles":true,
         "filters":[
           {"name":"Series","values":["3 Series"]},
-          {"name":"Year","values":["2019","2020","2021","2022"]},
-          {"name":"Option","values":[]},
-          {name: "Model", values: ["330i xDrive"]}
+          {"name":"Year","values":["2019","2020","2021","2022"]}
         ]
       }
       let headers = {
@@ -142,6 +143,7 @@ createApp({
             }
             Promise.all(promises).then(() => {
               console.log("All results have been fetched")
+              console.log("Retrieved", this.allInventory.length, "vehicles")
               this.filterAllInventory()
               this.loading = false;
             })
@@ -166,12 +168,19 @@ createApp({
         })
         return includesOptions
       })
+      console.log("Filtered down to", this.filteredInventory.length, "vehicles")
     },
     vehicleImage(vehicle) {
       if(!vehicle.photos || vehicle.photos.length == 0) {
         return ""
       }
       return this.imageUrl + vehicle.photos[0]
+    },
+    formatNumber(number) {
+      return this.formatter.format(number)
+    },
+    resultsTooltip() {
+      return 'Filtered ' + this.allInventory.length + ' down to ' + this.filteredInventory.length
     }
   },
   watch: {
@@ -181,10 +190,14 @@ createApp({
   },
   mounted() {
     // this.getToken()
-    this.test()
-    // this.getToken()
-      // .then( () => {
-      //   this.getInventory(0)
-      // })
+    // this.test()
+    this.getToken()
+      .then( () => {
+        this.fetchInventory()
+      })
   }
 }).mount("#app")
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})

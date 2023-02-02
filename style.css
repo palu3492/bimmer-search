@@ -19,6 +19,10 @@ body {
     font-family: BMWTypeNextLight,Helvetica Neue,-apple-system,"system-ui",BlinkMacSystemFont,serif;
 }
 
+a {
+    color: black;
+}
+
 .header {
     height: 100px;
     font-family: BMWTypeNext;
@@ -49,6 +53,11 @@ body {
 
 .content {
 
+}
+
+.results-title {
+    font-family: BMWTypeNext;
+    word-spacing: 3px
 }
 
 .card-layout {
@@ -90,4 +99,18 @@ body {
 
 .vehicle-info p {
     margin: 0px;
+}
+
+.certified {
+    background-color: #221f1f;
+    border-radius: 2px;
+    color: #f1f1f1;
+    padding: 2px 8px;
+    text-align: center;
+    font-size: 85%;
+}
+
+.carfax {
+    color: black;
+    font-size: 80%;
 }
