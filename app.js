@@ -1,7 +1,7 @@
 
 const { createApp } = Vue
 
-createApp({
+const app = createApp({
   data() {
     return {
       message: 'Only a test',
@@ -13,20 +13,44 @@ createApp({
       token: "",
       filteredInventory: [],
       allInventory: [],
+      inventoryCount: 0,
       dealers: {},
       loading: false,
       filters: {
         radius: "25",
         zip: "55305",
-        options: ""
+        options: "",
+        types: {},
+        typesArray: []
       },
       search: {
         pageIndex: 0,
         // resultIndex: 0,
         numberOfPages: 1,
-        pageSize: 100
+        pageSize: 100,
+        shouldFetchAll: true,
+        facets: [],
+        facetMap: {
+          "BodyStyle": "Body Style",
+          "Drivetrain": "Drivetrain",
+          "ExteriorColor": "Exterior Color",
+          "FuelType": "Fuel Type",
+          "HighwayMpg": "Highway MPG",
+          "InteriorColor": "Interior Color",
+          "Model": "Model",
+          "Odometer": "Odometer",
+          "Option": "Package",
+          "Price": "Price",
+          "Series": "Series",
+          "Transmission": "Transmission",
+          "Type": "Type",
+          "Upholstery": "Upholstery",
+          "Year": "Year"
+
+        }
       },
-      formatter: new Intl.NumberFormat()
+      formatter: new Intl.NumberFormat(),
+      capMaxHeight: false
     }
   },
   methods: {
@@ -64,20 +88,21 @@ createApp({
       let auth = "Bearer " + this.token
       let payload = {
         "pageIndex": resultsIndex,
-        "PageSize":this.search.pageSize,
-        "postalCode":this.filters.zip,
-        "radius":this.filters.radius,
-        "sortBy":"price",
-        "sortDirection":"asc",
-        "formatResponse":false,
-        "includeFacets":true,
-        "includeDealers":true,
-        "includeVehicles":true,
-        "filters":[
-          {"name":"Series","values":["3 Series"]},
-          {"name":"Year","values":["2019","2020","2021","2022"]},
-          {"name": "Model", "values": ["330i xDrive", "330i"]}
-        ]
+        "PageSize": this.search.pageSize,
+        "postalCode": this.filters.zip,
+        "radius": this.filters.radius,
+        "sortBy": "price",
+        "sortDirection": "asc",
+        "formatResponse": false,
+        "includeFacets": true,
+        "includeDealers": true,
+        "includeVehicles": true,
+        "filters": this.filters.typesArray
+        // [
+        //   {"name":"Series","values":["3 Series"]},
+        //   {"name":"Year","values":["2019","2020","2021","2022"]},
+        //   {"name": "Model", "values": ["330i xDrive", "330i"]}
+        // ]
       }
       let headers = {
         "Content-Type": "application/json",
@@ -116,12 +141,18 @@ createApp({
         // this.resultsIndex += this.pageSize
         // print("Recieved %d records for page %d" % (result_records, page_index + 1))
         this.search.pageIndex += 1
+        this.setFilterTypes(inventory.facets)
+        this.search.facets = inventory.facets
+        if(this.filters.options.length == 0) {
+          this.inventoryCount = totalRecords
+        }
       }
     },
     fetchInventory() {
       this.loading = true;
       this.search.pageIndex = 0
       this.allInventory = []
+      this.setFilterArray()
       let promise = NaN
       if(this.token.length < 10) {
         console.log("Grabbing token")
@@ -134,7 +165,7 @@ createApp({
           .then( () => {
             let promises = []
             let numberOfPages = this.search.numberOfPages
-            if(!isNaN(numberOfPages) && numberOfPages > 1) {
+            if(this.search.shouldFetchAll && this.filters.options.length > 0 && !isNaN(numberOfPages) && numberOfPages > 1) {
               for(let i = 1; i < numberOfPages; i++) {
                 promise = this.getInventory(i * this.search.pageSize)
                 promises.push(promise)
@@ -159,16 +190,22 @@ createApp({
     },
     filterAllInventory() {
       console.log("Filtering inventory")
-      let options = this.filters.options.split(", ")
-      this.filteredInventory = this.allInventory.filter(vehicle => {
-        includesOptions = true;
-        options.forEach(option => {
-          if(!vehicle.allCodes || !vehicle.allCodes.includes(option)) {
-            includesOptions = false
-          }
+      console.log("Options", this.filters.options)
+      if(this.filters.options.length > 0) {
+        let options = this.filters.options.split(", ")
+        this.filteredInventory = this.allInventory.filter(vehicle => {
+          include = true;
+          options.forEach(option => {
+            if(!vehicle.allCodes || !vehicle.allCodes.includes(option)) {
+              include = false
+            }
+          })
+          return include
         })
-        return includesOptions
-      })
+        this.inventoryCount = this.filteredInventory.length
+      } else {
+        this.filteredInventory = this.allInventory
+      }
       console.log("Filtered down to", this.filteredInventory.length, "vehicles")
     },
     vehicleImage(vehicle) {
@@ -182,6 +219,31 @@ createApp({
     },
     resultsTooltip() {
       return 'Filtered ' + this.allInventory.length + ' down to ' + this.filteredInventory.length
+    },
+    setFilterTypes(facets) {
+      facets.forEach(facet => {
+        this.filters.types[facet.name] = []
+        // facet.values.forEach(value =>{
+        //   this.filters.types[facet.name].push(value.value)
+        // })
+      })
+      // console.log(this.filters.types)
+    },
+    setFilterArray() {
+      this.filters.typesArray = []
+      for (const [key, value] of Object.entries(this.filters.types)) {
+        if(value.length > 0) {
+          const filterObject = {name: key, values: value}
+          this.filters.typesArray.push(filterObject)
+        }
+      }
+      console.log(this.filters.typesArray)
+    },
+    facetName(facetType) {
+      if(facetType in this.search.facetMap) {
+        return this.search.facetMap[facetType]
+      }
+      return false
     }
   },
   watch: {
@@ -192,13 +254,25 @@ createApp({
   mounted() {
     // this.getToken()
     // this.test()
-    this.getToken()
-      .then( () => {
-        this.fetchInventory()
-      })
+
+    // this.getToken()
+    //   .then( () => {
+    //     this.fetchInventory()
+    //   })
   }
 }).mount("#app")
 
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
+
+// window.onscroll = function() {myFunction()};
+// var header = document.getElementById("header");
+// var sticky = 100; // header.offsetTop;
+// function myFunction() {
+//   if (window.pageYOffset > sticky) {
+//     app.capMaxHeight = true;
+//   } else {
+//     app.capMaxHeight = false;
+//   }
+// }
