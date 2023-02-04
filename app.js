@@ -21,13 +21,15 @@ const app = createApp({
         zip: "55305",
         options: "",
         types: {},
-        typesArray: []
+        typesArray: [],
+        sortOptions: ["Distance", "Price", "Odometer", "Year"],
+        sortBy: "Price"
       },
       search: {
         pageIndex: 0,
         // resultIndex: 0,
         numberOfPages: 1,
-        pageSize: 100,
+        pageSize: 50,
         shouldFetchAll: true,
         facets: [],
         facetMap: {
@@ -46,7 +48,6 @@ const app = createApp({
           "Type": "Type",
           "Upholstery": "Upholstery",
           "Year": "Year"
-
         }
       },
       formatter: new Intl.NumberFormat(),
@@ -91,7 +92,7 @@ const app = createApp({
         "PageSize": this.search.pageSize,
         "postalCode": this.filters.zip,
         "radius": this.filters.radius,
-        "sortBy": "price",
+        "sortBy": this.filters.sortBy,
         "sortDirection": "asc",
         "formatResponse": false,
         "includeFacets": true,
@@ -255,10 +256,10 @@ const app = createApp({
     // this.getToken()
     // this.test()
 
-    // this.getToken()
-    //   .then( () => {
-    //     this.fetchInventory()
-    //   })
+    this.getToken()
+      .then( () => {
+        this.fetchInventory()
+      })
   }
 }).mount("#app")
 

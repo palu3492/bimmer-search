@@ -98,8 +98,17 @@
                                             <span class="sr-only">Loading...</span>
                                         </div>
                                     </div>
-                                    <div class="col-4 d-flex align-items-center">
-                                        
+                                    <div class="col-4 d-flex align-items-center justify-content-end">
+                                        <div class="dropdown" style="margin-right: 70px;">
+                                          <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Sort by {{ filters.sortBy }}
+                                          </button>
+                                          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="#" v-for="sortOption in filters.sortOptions" @click="filters.sortBy = sortOption">
+                                                {{ sortOption }}
+                                            </a>
+                                          </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
