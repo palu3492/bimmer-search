@@ -65,10 +65,11 @@ a {
 .filter-header {
     padding: 0.375rem 0.75rem;
     background-color: #e9ecef;
+    cursor: pointer;
 }
 
-.content {
-
+.filter-body {
+    cursor: default;
 }
 
 .results-title {

@@ -49,8 +49,8 @@
                               <input v-model="filters.radius" type="text" class="form-control"  :disabled="loading">
                             </div>
 
+                            <p class="m-0">Filter by option/package codes</p>
                             <div class="input-group mb-3">
-                                <p class="m-0">Filter by option/package codes</p>
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">Options</span>
                                 </div>
@@ -58,7 +58,7 @@
                             </div>
 
                             <div>
-                                <div v-for="facet in search.facets">
+                                <div v-for="facet in orderedFacets()">
                                     <div id="'accordion-'+facet.name" class="mb-3" v-if="facetName(facet.name) != false">
                                       <div class="card">
                                         <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name'+facet.name" data-toggle="collapse" :data-target="'#filter-'+facet.name" aria-expanded="false" :aria-controls="facet.name" @click="facet.show ? facet.show = false : facet.show = true">
@@ -69,7 +69,7 @@
                                         </div>
 
                                         <div :id="'filter-'+facet.name" class="collapse" :aria-labelledby="'#filter-name'+facet.name" :data-parent="'#accordion-'+facet.name">
-                                          <div class="card-body">
+                                          <div class="card-body filter-body">
                                             <div v-for="value in facet.values" class="d-flex align-items-baseline">
                                                 <input type="checkbox" v-model="filters.types[facet.name]" :value="value.value" :disabled="loading">
                                                 <p class="m-0 ml-3">{{ value.value }}</p>
@@ -86,20 +86,20 @@
                         </div>
                         <!-- <p style="position: fixed; bottom: 0; font-size: 0.8em;" class="mb-2">Bimmer Search</p> -->
                     </div>
-                    <div class="col-12 col-md-9 col-lg-10 content">
+                    <div class="col-12 col-md-9 col-lg-10">
                         <div class="content-top d-flex">
                             <div style="flex: 1">
                                 <div class="row m-0" style="height: 100%">
-                                    <div class="col-4 d-flex align-items-center">
-                                        <p class="m-0 results-title" v-show="inventoryCount > 0">{{ inventoryCount }} Vehicles</p>
+                                    <div class="col-6 col-sm-4 d-flex align-items-center">
+                                        <p class="m-0 results-title" v-show="inventoryCount != null">{{ inventoryCount }} Vehicles</p>
                                     </div>
-                                    <div class="col-4 d-flex align-items-center justify-content-center">
+                                    <div class="col-0 col-sm-4 d-none d-sm-flex align-items-center justify-content-center">
                                         <div class="spinner-border" role="status" v-if="loading">
                                             <span class="sr-only">Loading...</span>
                                         </div>
                                     </div>
-                                    <div class="col-4 d-flex align-items-center justify-content-end">
-                                        <div class="dropdown" style="margin-right: 70px;">
+                                    <div class="col-6 col-sm-4 d-flex align-items-center justify-content-end">
+                                        <div class="dropdown mr-0 mr-sm-5">
                                           <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Sort by {{ filters.sortBy }}
                                           </button>

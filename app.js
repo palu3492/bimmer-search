@@ -13,7 +13,7 @@ const app = createApp({
       token: "",
       filteredInventory: [],
       allInventory: [],
-      inventoryCount: 0,
+      inventoryCount: null,
       dealers: {},
       loading: false,
       filters: {
@@ -33,22 +33,23 @@ const app = createApp({
         shouldFetchAll: true,
         facets: [],
         facetMap: {
-          "BodyStyle": "Body Style",
-          "Drivetrain": "Drivetrain",
-          "ExteriorColor": "Exterior Color",
-          "FuelType": "Fuel Type",
-          "HighwayMpg": "Highway MPG",
-          "InteriorColor": "Interior Color",
-          "Model": "Model",
-          "Odometer": "Odometer",
-          "Option": "Package",
-          "Price": "Price",
-          "Series": "Series",
-          "Transmission": "Transmission",
           "Type": "Type",
+          "Odometer": "Odometer",
+          "Price": "Price",
+          "Year": "Year",
+          "Series": "Series",
+          "Model": "Model",
+          "Option": "Package",
+          "ExteriorColor": "Exterior Color",
+          "InteriorColor": "Interior Color",
           "Upholstery": "Upholstery",
-          "Year": "Year"
-        }
+          "Drivetrain": "Drivetrain",
+          "Transmission": "Transmission",
+          "BodyStyle": "Body Style",
+          "FuelType": "Fuel Type"
+          // "HighwayMpg": "Highway MPG",
+        },
+        facetOrder: ["Type", "Odometer", "Price", "Year", "Series", "Model", "Option", "ExteriorColor", "InteriorColor", "Upholstery", "Drivetrain", "Transmission", "BodyStyle", "FuelType"]
       },
       formatter: new Intl.NumberFormat(),
       capMaxHeight: false
@@ -245,6 +246,11 @@ const app = createApp({
         return this.search.facetMap[facetType]
       }
       return false
+    },
+    orderedFacets() {
+      return [...this.search.facets].sort((a,b) => {
+        return this.search.facetOrder.indexOf(a.name) > this.search.facetOrder.indexOf(b.name) ? 1 : -1
+      })
     }
   },
   watch: {
