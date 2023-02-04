@@ -58,6 +58,13 @@
                                 <input v-model="filters.options" type="text" class="form-control" :disabled="loading" placeholder="5AU, ZMP">
                             </div>
 
+                            <div class="card-body filter-body d-flex mb-3 justify-content-between" v-if="getFacet('Type')" style="border: 1px solid rgba(0,0,0,.125); border-radius: 0.25rem; padding: 0.8rem 1.25rem;" >
+                                <div v-for="value in getFacet('Type').values" class="d-flex align-items-baseline">
+                                    <input type="checkbox" v-model="filters.types['Type']" :value="value.value" :disabled="loading">
+                                    <p class="m-0 ml-3">{{ value.value }}</p>
+                                </div>
+                            </div>
+
                             <div>
                                 <div v-for="facet in orderedFacets()">
                                     <div id="'accordion-'+facet.name" class="mb-3" v-if="facetName(facet.name) != false">

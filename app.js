@@ -34,7 +34,6 @@ const app = createApp({
         shouldFetchAll: true,
         facets: [],
         facetMap: {
-          "Type": "Type",
           "Odometer": "Odometer",
           "Price": "Price",
           "Year": "Year",
@@ -50,7 +49,7 @@ const app = createApp({
           "FuelType": "Fuel Type"
           // "HighwayMpg": "Highway MPG",
         },
-        facetOrder: ["Type", "Odometer", "Price", "Year", "Series", "Model", "Option", "ExteriorColor", "InteriorColor", "Upholstery", "Drivetrain", "Transmission", "BodyStyle", "FuelType"]
+        facetOrder: ["Odometer", "Price", "Year", "Series", "Model", "Option", "ExteriorColor", "InteriorColor", "Upholstery", "Drivetrain", "Transmission", "BodyStyle", "FuelType"]
       },
       formatter: new Intl.NumberFormat(),
       capMaxHeight: false
@@ -252,6 +251,16 @@ const app = createApp({
       return [...this.search.facets].sort((a,b) => {
         return this.search.facetOrder.indexOf(a.name) > this.search.facetOrder.indexOf(b.name) ? 1 : -1
       })
+    },
+    getFacet(facetName) {
+      let foundFacet = false;
+      this.search.facets.forEach(facet => {
+        if(facet.name == facetName) {
+          foundFacet = facet
+          return
+        }
+      })
+      return foundFacet
     }
   },
   watch: {
