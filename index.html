@@ -30,11 +30,12 @@
             <div class="gray-bar"></div>
             <div id="app" class="container-fluid d-flex flex-column"  style="flex: 1">
                 <div class="row" style="flex: 1">
-                    <div class="col-12 col-md-3 col-lg-2 sidebar">
-                        <div class="content-top align-items-center d-flex">
-                            <h5 class="m-0 ml-3">Filters</h5>
+                    <div :class="(filters.show ? 'col-12 col-md-3 col-lg-2' : 'col-12 col-md-1') + ' sidebar'">
+                        <div class="content-top d-flex align-items-center justify-content-between" style="cursor: pointer" @click="filters.show = !filters.show">
+                            <h5 class="m-0 mx-3">Filters</h5>
+                            <i class="bi bi-caret-right-fill mr-3" :style="filters.show ? 'transform: rotate(90deg);' : ''"></i>
                         </div>
-                        <div class="sidebar-content scroll-box py-3">
+                        <div class="sidebar-content scroll-box py-3" v-show="filters.show">
                             <div class="input-group mb-3">
                               <div class="input-group-prepend">
                                 <span class="input-group-text">Zip</span>
@@ -61,7 +62,7 @@
                                 <div v-for="facet in orderedFacets()">
                                     <div id="'accordion-'+facet.name" class="mb-3" v-if="facetName(facet.name) != false">
                                       <div class="card">
-                                        <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name'+facet.name" data-toggle="collapse" :data-target="'#filter-'+facet.name" aria-expanded="false" :aria-controls="facet.name" @click="facet.show ? facet.show = false : facet.show = true">
+                                        <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name'+facet.name" data-toggle="collapse" :data-target="'#filter-'+facet.name" aria-expanded="false" :aria-controls="facet.name" @click="facet.show = !facet.show">
                                           <span>
                                             {{ facetName(facet.name) }}
                                           </span>
@@ -86,7 +87,7 @@
                         </div>
                         <!-- <p style="position: fixed; bottom: 0; font-size: 0.8em;" class="mb-2">Bimmer Search</p> -->
                     </div>
-                    <div class="col-12 col-md-9 col-lg-10">
+                    <div :class="filters.show ? 'col-12 col-md-9 col-lg-10' : 'col-12 col-md-11'">
                         <div class="content-top d-flex">
                             <div style="flex: 1">
                                 <div class="row m-0" style="height: 100%">
