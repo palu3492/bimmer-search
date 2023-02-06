@@ -72,6 +72,23 @@ a {
     cursor: default;
 }
 
+.search-button {
+    width: 100%;
+    position: sticky;
+    bottom: 0;
+    background: white;
+}
+
+@media (min-width: 768px) {
+    .search-row {
+        position: fixed!important;
+    }
+
+    .sidebar-content {
+        padding-bottom: 4.5rem!important;
+    }
+}
+
 .results-title {
     font-family: BMWTypeNext;
     word-spacing: 3px

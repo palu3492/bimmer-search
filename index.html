@@ -35,7 +35,7 @@
                             <h5 class="m-0 mx-3">Filters</h5>
                             <i class="bi bi-caret-right-fill mr-3" :style="filters.show ? 'transform: rotate(90deg);' : ''"></i>
                         </div>
-                        <div class="sidebar-content scroll-box py-3" v-show="filters.show">
+                        <div class="sidebar-content scroll-box pt-3" v-show="filters.show">
                             <div class="input-group mb-3">
                               <div class="input-group-prepend">
                                 <span class="input-group-text">Zip</span>
@@ -58,8 +58,8 @@
                                 <input v-model="filters.options" type="text" class="form-control" :disabled="loading" placeholder="5AU, ZMP">
                             </div>
 
-                            <div class="card-body filter-body d-flex mb-3 justify-content-between" v-if="getFacet('Type')" style="border: 1px solid rgba(0,0,0,.125); border-radius: 0.25rem; padding: 0.8rem 1.25rem;" >
-                                <div v-for="value in getFacet('Type').values" class="d-flex align-items-baseline">
+                            <div class="card-body filter-body d-flex mb-3" v-if="getFacet('Type')" style="border: 1px solid rgba(0,0,0,.125); border-radius: 0.25rem; padding: 0.8rem 1.25rem;     flex-wrap: wrap;" >
+                                <div v-for="value in getFacet('Type').values" class="d-flex align-items-baseline mr-4">
                                     <input type="checkbox" v-model="filters.types['Type']" :value="value.value" :disabled="loading">
                                     <p class="m-0 ml-3">{{ value.value }}</p>
                                 </div>
@@ -88,9 +88,11 @@
                                   </div>
                                 </div>
                             </div>
-
-                            <button @click="fetchInventory" class="btn btn-outline-dark" style="width: 100%;" :disabled="loading">Search</button>
-
+                            <div class="row position-static search-row" style="position: fixed; bottom: 0; width: 100vw;">
+                                <div class="col-12 col-md-3 col-lg-2" style="background: white; border-top: 1px solid #cacaca;">
+                                    <button @click="fetchInventory" class="btn btn-outline-dark search-button my-3" :disabled="loading">Search</button>
+                                </div>
+                            </div>
                         </div>
                         <!-- <p style="position: fixed; bottom: 0; font-size: 0.8em;" class="mb-2">Bimmer Search</p> -->
                     </div>
