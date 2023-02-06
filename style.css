@@ -58,8 +58,7 @@ a {
     position: sticky;
     top: 60;
     z-index: 4;
-    max-height: calc(100vh - 60px);
-    overflow: scroll;
+/*    display: none;*/
 }
 
 .filter-header {
@@ -82,10 +81,14 @@ a {
 @media (min-width: 768px) {
     .search-row {
         position: fixed!important;
+        width: 100vw;
     }
 
     .sidebar-content {
         padding-bottom: 4.5rem!important;
+        overflow: scroll;
+        max-height: calc(100vh - 60px);
+/*        display: block;*/
     }
 }
 

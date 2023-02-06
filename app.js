@@ -24,7 +24,7 @@ const app = createApp({
         typesArray: [],
         sortOptions: ["Distance", "Price", "Odometer", "Year"],
         sortBy: "Price",
-        show: true
+        show: screen.width > 768
       },
       search: {
         pageIndex: 0,
