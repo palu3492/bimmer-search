@@ -24,11 +24,10 @@ const app = createApp({
         typesArray: [],
         sortOptions: ["Distance", "Price", "Odometer", "Year"],
         sortBy: "Price",
-        show: screen.width > 768
+        show: screen.width > 768 // Don't show filters on mobile
       },
       search: {
         pageIndex: 0,
-        // resultIndex: 0,
         numberOfPages: 1,
         pageSize: 50,
         shouldFetchAll: true,
@@ -47,12 +46,10 @@ const app = createApp({
           "Transmission": "Transmission",
           "BodyStyle": "Body Style",
           "FuelType": "Fuel Type"
-          // "HighwayMpg": "Highway MPG",
         },
         facetOrder: ["Odometer", "Price", "Year", "Series", "Model", "Option", "ExteriorColor", "InteriorColor", "Upholstery", "Drivetrain", "Transmission", "BodyStyle", "FuelType"]
       },
-      formatter: new Intl.NumberFormat(),
-      capMaxHeight: false
+      formatter: new Intl.NumberFormat()
     }
   },
   methods: {
@@ -223,11 +220,14 @@ const app = createApp({
       return 'Filtered ' + this.allInventory.length + ' down to ' + this.filteredInventory.length
     },
     setFilterTypes(facets) {
+      const filterTypes = {...this.filters.types}
+      this.filters.types = {}
       facets.forEach(facet => {
-        this.filters.types[facet.name] = []
-        // facet.values.forEach(value =>{
-        //   this.filters.types[facet.name].push(value.value)
-        // })
+        if(facet.name in filterTypes) {
+          this.filters.types[facet.name] = filterTypes[facet.name]
+        } else {
+          this.filters.types[facet.name] = []
+        }
       })
       // console.log(this.filters.types)
     },
@@ -283,13 +283,3 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 
-// window.onscroll = function() {myFunction()};
-// var header = document.getElementById("header");
-// var sticky = 100; // header.offsetTop;
-// function myFunction() {
-//   if (window.pageYOffset > sticky) {
-//     app.capMaxHeight = true;
-//   } else {
-//     app.capMaxHeight = false;
-//   }
-// }
