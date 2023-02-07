@@ -15,6 +15,7 @@ const app = createApp({
       allInventory: [],
       inventoryCount: null,
       dealers: {},
+      updatedDealers: {},
       loading: false,
       filters: {
         radius: "25",
@@ -24,14 +25,14 @@ const app = createApp({
         typesArray: [],
         sortOptions: ["Distance", "Price", "Odometer", "Year"],
         sortBy: "Price",
-        show: screen.width > 768 // Don't show filters on mobile
+        show: screen.width > 768 // Default hide filters on mobile
       },
       search: {
         pageIndex: 0,
         numberOfPages: 1,
-        pageSize: 50,
-        shouldFetchAll: true,
-        facets: [],
+        pageSize: 25,
+        facets: {},
+        facetNames: [],
         facetMap: {
           "Odometer": "Odometer",
           "Price": "Price",
@@ -97,11 +98,6 @@ const app = createApp({
         "includeDealers": true,
         "includeVehicles": true,
         "filters": this.filters.typesArray
-        // [
-        //   {"name":"Series","values":["3 Series"]},
-        //   {"name":"Year","values":["2019","2020","2021","2022"]},
-        //   {"name": "Model", "values": ["330i xDrive", "330i"]}
-        // ]
       }
       let headers = {
         "Content-Type": "application/json",
@@ -116,40 +112,49 @@ const app = createApp({
             headers: headers
         })
         .then(response => {
-          // console.log(JSON.stringify(response, null, 4))
-          // this.token = response.data.access_token
-          // console.log(this.token)
-          // this.inventory = response.data
           this.processInventory(response.data)
+
+          let numberOfPages = this.search.numberOfPages
+          if(this.filters.options.length > 0 && !isNaN(numberOfPages) && numberOfPages > 1 && this.search.pageIndex < numberOfPages) {
+            this.getInventory(this.search.pageIndex * this.search.pageSize)
+          } else {
+            console.log("All results have been fetched")
+            console.log("Retrieved", this.allInventory.length, "vehicles")
+            this.filterAllInventory()
+            this.loading = false;
+          }
         })
     },
     processInventory(inventory) {
       this.allInventory = this.allInventory.concat(inventory.vehicles)
       inventory.dealers.forEach( dealer => {
-        this.dealers[dealer.dealerCode] = dealer
+        this.updatedDealers[dealer.dealerCode] = dealer
       });
       if (this.search.pageIndex == 0) {
         let totalRecords = inventory.totalRecords
         console.log("Total records", totalRecords)
         // let resultRecords = inventory_json.resultRecords
         this.search.numberOfPages = Math.ceil(totalRecords / this.search.pageSize)
-        if(this.search.numberOfPages > 30) {
-          this.search.numberOfPages = 30
+        if(this.search.numberOfPages > 20) {
+          this.search.numberOfPages = 20
         }
         console.log("Number of pages", this.search.numberOfPages)
         // this.resultsIndex += this.pageSize
         // print("Recieved %d records for page %d" % (result_records, page_index + 1))
-        this.search.pageIndex += 1
         this.setFilterTypes(inventory.facets)
-        this.search.facets = inventory.facets
+        this.setFacets(inventory.facets)
         if(this.filters.options.length == 0) {
           this.inventoryCount = totalRecords
         }
       }
+      this.search.pageIndex += 1
     },
     fetchInventory() {
       this.loading = true;
       this.search.pageIndex = 0
+      if(this.filters.options.length > 0) {
+        this.search.pageSize = 100
+      }
       this.allInventory = []
       this.setFilterArray()
       let promise = NaN
@@ -161,24 +166,6 @@ const app = createApp({
       }
       promise.then(() => {
         this.getInventory(0)
-          .then( () => {
-            let promises = []
-            let numberOfPages = this.search.numberOfPages
-            if(this.search.shouldFetchAll && this.filters.options.length > 0 && !isNaN(numberOfPages) && numberOfPages > 1) {
-              for(let i = 1; i < numberOfPages; i++) {
-                promise = this.getInventory(i * this.search.pageSize)
-                promises.push(promise)
-              }
-            } else {
-              console.log("Only one page of results")
-            }
-            Promise.all(promises).then(() => {
-              console.log("All results have been fetched")
-              console.log("Retrieved", this.allInventory.length, "vehicles")
-              this.filterAllInventory()
-              this.loading = false;
-            })
-          });
       });
     },
     test() {
@@ -188,6 +175,7 @@ const app = createApp({
       // this.fetchInventory();
     },
     filterAllInventory() {
+      this.search.pageSize = 25
       console.log("Filtering inventory")
       console.log("Options", this.filters.options)
       if(this.filters.options.length > 0) {
@@ -206,6 +194,8 @@ const app = createApp({
         this.filteredInventory = this.allInventory
       }
       console.log("Filtered down to", this.filteredInventory.length, "vehicles")
+      this.dealers = {...this.updatedDealers}
+      this.updatedDealers = {}
     },
     vehicleImage(vehicle) {
       if(!vehicle.photos || vehicle.photos.length == 0) {
@@ -221,10 +211,10 @@ const app = createApp({
     },
     setFilterTypes(facets) {
       const filterTypes = {...this.filters.types}
-      this.filters.types = {}
+      // this.filters.types = {}
       facets.forEach(facet => {
         if(facet.name in filterTypes) {
-          this.filters.types[facet.name] = filterTypes[facet.name]
+          // this.filters.types[facet.name] = filterTypes[facet.name]
         } else {
           this.filters.types[facet.name] = []
         }
@@ -239,28 +229,35 @@ const app = createApp({
           this.filters.typesArray.push(filterObject)
         }
       }
-      console.log(this.filters.typesArray)
+      console.log("Filter array", ...this.filters.typesArray)
     },
-    facetName(facetType) {
-      if(facetType in this.search.facetMap) {
-        return this.search.facetMap[facetType]
+    facetName(facetName) {
+      if(facetName in this.search.facetMap) {
+        return this.search.facetMap[facetName]
       }
       return false
     },
-    orderedFacets() {
-      return [...this.search.facets].sort((a,b) => {
-        return this.search.facetOrder.indexOf(a.name) > this.search.facetOrder.indexOf(b.name) ? 1 : -1
-      })
-    },
-    getFacet(facetName) {
-      let foundFacet = false;
-      this.search.facets.forEach(facet => {
-        if(facet.name == facetName) {
-          foundFacet = facet
-          return
+    setFacets(facets) {
+      facetObjects = {}
+      this.search.facetNames = []
+      facets.forEach(facet => {
+        if(this.search.facetOrder.indexOf(facet.name) >= 0 && (facet.values.length > 0 || this.filters.types[facet.name].length > 0)) {
+          array = []
+          facet.values.forEach(valueObject => {
+            array.push(valueObject.value)
+          })
+          array = array.concat(this.filters.types[facet.name])
+          facetObjects[facet.name] = [...new Set(array)]
+          this.search.facetNames.push(facet.name)
         }
       })
-      return foundFacet
+      // console.log([...this.search.facetNames])
+      this.search.facetNames.sort((a,b) => {
+        return this.search.facetOrder.indexOf(a) > this.search.facetOrder.indexOf(b) ? 1 : -1
+      })
+      // console.log([...this.search.facetNames])
+      this.search.facets = facetObjects
+      this.search.facets["Type"] = ["CPO", "Used"]
     }
   },
   watch: {

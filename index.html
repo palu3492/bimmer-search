@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-        <!-- <link rel="shortcut icon" type="image/jpg" href="../static/assets/favicon.png"> -->
+        <link rel="shortcut icon" type="image/png" href="bs.png">
 
         <title>Bimmer Search</title>
         <!--
@@ -58,29 +58,28 @@
                                 <input v-model="filters.options" type="text" class="form-control" :disabled="loading" placeholder="5AU, ZMP">
                             </div>
 
-                            <div class="card-body filter-body d-flex mb-3" v-if="getFacet('Type')" style="border: 1px solid rgba(0,0,0,.125); border-radius: 0.25rem; padding: 0.8rem 1.25rem;     flex-wrap: wrap;" >
-                                <div v-for="value in getFacet('Type').values" class="d-flex align-items-baseline mr-4">
-                                    <input type="checkbox" v-model="filters.types['Type']" :value="value.value" :disabled="loading">
-                                    <p class="m-0 ml-3">{{ value.value }}</p>
+                            <div class="card-body filter-body d-flex mb-3" style="border: 1px solid rgba(0,0,0,.125); border-radius: 0.25rem; padding: 0.8rem 1.25rem; flex-wrap: wrap;" >
+                                <div v-for="value in search.facets['Type']" class="d-flex align-items-baseline mr-4">
+                                    <input type="checkbox" v-model="filters.types['Type']" :value="value" :disabled="loading">
+                                    <p class="m-0 ml-3">{{ value }}</p>
                                 </div>
                             </div>
-
                             <div>
-                                <div v-for="facet in orderedFacets()">
-                                    <div id="'accordion-'+facet.name" class="mb-3" v-if="facetName(facet.name) != false">
+                                <div v-for="facet in search.facetNames">
+                                    <div id="'accordion-'+facet" class="mb-3">
                                       <div class="card">
-                                        <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name'+facet.name" data-toggle="collapse" :data-target="'#filter-'+facet.name" aria-expanded="false" :aria-controls="facet.name" @click="facet.show = !facet.show">
+                                        <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name'+facet" data-toggle="collapse" :data-target="'#filter-'+facet" aria-expanded="false" :aria-controls="facet" @click="search.facets[facet].show = !search.facets[facet].show">
                                           <span>
-                                            {{ facetName(facet.name) }}
+                                            {{ facetName(facet) }}
                                           </span>
-                                          <i class="bi bi-caret-right-fill" :style="facet.show ? 'transform: rotate(90deg);' : ''"></i>
+                                          <i class="bi bi-caret-right-fill" :style="search.facets[facet].show ? 'transform: rotate(90deg);' : ''"></i>
                                         </div>
 
-                                        <div :id="'filter-'+facet.name" class="collapse" :aria-labelledby="'#filter-name'+facet.name" :data-parent="'#accordion-'+facet.name">
+                                        <div :id="'filter-'+facet" class="collapse" :aria-labelledby="'#filter-name'+facet" :data-parent="'#accordion-'+facet">
                                           <div class="card-body filter-body">
-                                            <div v-for="value in facet.values" class="d-flex align-items-baseline">
-                                                <input type="checkbox" v-model="filters.types[facet.name]" :value="value.value" :disabled="loading">
-                                                <p class="m-0 ml-3">{{ value.value }}</p>
+                                            <div v-for="value in search.facets[facet]" class="d-flex align-items-baseline">
+                                                <input type="checkbox" v-model="filters.types[facet]" :value="value" :disabled="loading">
+                                                <p class="m-0 ml-3">{{ value }}</p>
                                             </div>
                                           </div>
                                         </div>
