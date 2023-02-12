@@ -66,16 +66,16 @@
                             </div>
                             <div>
                                 <div v-for="facet in search.facetNames">
-                                    <div id="'accordion-'+facet" class="mb-3">
+                                    <div :id="'accordion-'+facet" class="mb-3">
                                       <div class="card">
-                                        <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name'+facet" data-toggle="collapse" :data-target="'#filter-'+facet" aria-expanded="false" :aria-controls="facet" @click="search.facets[facet].show = !search.facets[facet].show">
+                                        <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name-'+facet" data-toggle="collapse" :data-target="'#filter-'+facet" aria-expanded="false" :aria-controls="facet" @click="search.facets[facet].show = !search.facets[facet].show">
                                           <span>
                                             {{ facetName(facet) }}
                                           </span>
                                           <i class="bi bi-caret-right-fill" :style="search.facets[facet].show ? 'transform: rotate(90deg);' : ''"></i>
                                         </div>
 
-                                        <div :id="'filter-'+facet" class="collapse" :aria-labelledby="'#filter-name'+facet" :data-parent="'#accordion-'+facet">
+                                        <div :id="'filter-'+facet" class="collapse" :aria-labelledby="'#filter-name-'+facet" :data-parent="'#accordion-'+facet">
                                           <div class="card-body filter-body">
                                             <div v-for="value in search.facets[facet]" class="d-flex align-items-baseline">
                                                 <input type="checkbox" v-model="filtering.filters[facet]" :value="value" :disabled="loading">
