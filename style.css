@@ -52,6 +52,7 @@ a {
 
 .sidebar {
     background: white;
+    box-shadow: rgb(0 0 0 / 16%) 8px 0px 8px -5px;
 }
 
 .sidebar-content {
@@ -73,6 +74,19 @@ a {
 
 .filter-body {
     cursor: default;
+}
+
+.type-filter {
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.25rem;
+    padding: 0.8rem 1.25rem;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    background: white;
+    border-top: 1px solid #cacaca;
+    box-shadow: white 0px -15px 10px -5px;
 }
 
 .search-button {
@@ -100,6 +114,14 @@ a {
     .filters-header {
         border-right: 1px solid #cacaca;
     }
+}
+
+.page-link {
+    color: #343a40; border-color: #343a40;
+}
+
+.page-selected {
+    background-color: #e9ecef;
 }
 
 .results-title {

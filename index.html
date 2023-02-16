@@ -58,7 +58,7 @@
                                 <input v-model="filtering.options" type="text" class="form-control" :disabled="loading" placeholder="5AU, ZMP">
                             </div>
 
-                            <div class="card-body filter-body d-flex mb-3" style="border: 1px solid rgba(0,0,0,.125); border-radius: 0.25rem; padding: 0.8rem 1.25rem; flex-wrap: wrap;" >
+                            <div class="card-body filter-body d-flex mb-3 type-filter">
                                 <div v-for="value in search.facets['Type']" class="d-flex align-items-baseline mr-4">
                                     <input type="checkbox" v-model="filtering.filters['Type']" :value="value" :disabled="loading">
                                     <p class="m-0 ml-3">{{ value }}</p>
@@ -88,7 +88,7 @@
                                 </div>
                             </div>
                             <div class="row position-static search-row" style="position: fixed; bottom: 0;">
-                                <div class="col-12 col-md-3 col-lg-2" style="background: white; border-top: 1px solid #cacaca;">
+                                <div class="col-12 col-md-3 col-lg-2 search-container">
                                     <button @click="fetchInventory" class="btn btn-outline-dark search-button my-3" :disabled="loading">Search</button>
                                 </div>
                             </div>
@@ -106,10 +106,16 @@
                                         <div class="spinner-border" role="status" v-if="loading">
                                             <span class="sr-only">Loading...</span>
                                         </div>
+                                        <nav aria-label="Page navigation" v-if="!loading && !filteringByOption && pages.length > 1" style="font-size: 0.9em;">
+                                          <ul class="pagination m-0">
+                                            <li class="page-item" v-for="page in pages"><span class="page-link" @click="changePage(page)">{{ page }}</span></li>
+                                            <!-- <li class="page-item" v-if="showAdditionalPage"><span class="page-link">...</span></li> -->
+                                          </ul>
+                                        </nav>
                                     </div>
                                     <div class="col-6 col-sm-4 d-flex align-items-center justify-content-end">
                                         <div class="dropdown mr-0 mr-sm-5">
-                                          <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                          <button class="btn btn-outline-dark dropdown-toggle" style="font-size: 0.9em;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Sort by {{ filtering.sortBy }}
                                           </button>
                                           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">

@@ -123,7 +123,7 @@ const app = createApp({
           this.processInventory(response.data)
           // If we are filtering by option codes and there are more than one page of results, then recursively grab the next page
           let numberOfPages = this.search.numberOfPages
-          if(this.filtering.options.length > 0 && !isNaN(numberOfPages) && numberOfPages > 1 && this.search.pageIndex < numberOfPages) {
+          if(this.filteringByOption && !isNaN(numberOfPages) && numberOfPages > 1 && this.search.pageIndex < numberOfPages) {
             this.getInventory(this.search.pageIndex * this.search.pageSize)
           } else {
             console.log("All results have been fetched")
@@ -162,7 +162,7 @@ const app = createApp({
         // Update the filters that are now avaliable, either more or less narrow
         this.updateFacets(inventory.facets)
         // When not filtering by option code, set the inventory length to the total number of results
-        if(this.filtering.options.length == 0) {
+        if(!this.filteringByOption) {
           this.inventory.count = totalRecords
         }
       }
@@ -174,7 +174,7 @@ const app = createApp({
       this.setLoading(true);
       this.search.pageIndex = 0 // Reset back to zero
       // If filtering by option code then fetch max page size
-      if(this.filtering.options.length > 0) {
+      if(this.filteringByOption) {
         this.search.pageSize = 100
       }
       // Clear out the inventory
@@ -195,13 +195,20 @@ const app = createApp({
         this.getInventory(0)
       });
     },
+    changePage(page) {
+      // console.log(page);
+      this.search.pageIndex = page - 1;
+      this.setLoading(true);
+      this.inventory.all = []
+      this.getInventory(this.search.pageIndex * this.search.pageSize)
+    },
     filterAllInventory() {
       // Once all the inventory has been recieved from one or more pages, filter down the results is necessary 
       this.search.pageSize = 25
       console.log("Filtering inventory")
       console.log("Options", this.filtering.options)
       // If filtering with option codes
-      if(this.filtering.options.length > 0) {
+      if(this.filteringByOption) {
         // Go through each vehicle and filter out the vehicles that don't have all the option codes
         let options = this.filtering.options.split(", ")
         this.inventory.filtered = this.inventory.all.filter(vehicle => {
@@ -311,6 +318,43 @@ const app = createApp({
       this.filtering.radius = 50;
       // this.filtering.options = "5AU";
       // this.fetchInventory();
+    }
+  },
+  computed: {
+    showAdditionalPage() {
+      return this.search.numberOfPages - this.search.pageIndex > 5;
+    },
+    filteringByOption() {
+      return this.filtering.options.length > 0;
+    },
+    pages() {
+      // [1,2,3,4,5],6,7,8,9
+      // 1,2,[3,4,5,6,7],8,9
+      // 1,2,3,4,[5,6,7,8,9]
+
+      let numberOfPages = this.search.numberOfPages // 10
+      let pageIndex = this.search.pageIndex // 9
+      console.log("numberOfPages", numberOfPages);
+      console.log("pageIndex", pageIndex);
+      pages = []
+
+      endDiff = numberOfPages - pageIndex
+      endDiff = 2 - endDiff;
+      if(endDiff < 0) {
+        endDiff = 0;
+      }
+
+      // 2,3, 4, 5,6
+      for(let i = pageIndex - 2 - endDiff; i <= numberOfPages; i++) {
+        if(i > 0) {
+          pages.push(i);
+        }
+        if(pages.length == 5) {
+          break;
+        }
+      }
+      console.log("Pages", [...pages])
+      return pages;
     }
   },
   watch: {
