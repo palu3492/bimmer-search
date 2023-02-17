@@ -35,6 +35,7 @@ const app = createApp({
         pageIndex: 0,
         numberOfPages: 1,
         pageSize: 25,
+        pages: [],
         facets: {},
         facetNames: [],
         facetMap: {
@@ -230,6 +231,7 @@ const app = createApp({
       // Clear out previous dealers object and set to updated object
       this.dealers.current = {...this.dealers.new}
       this.dealers.new = {}
+      this.setPages()
     },
     vehicleImage(vehicle) {
       // Return the vehicle iamge URL for a vehicle object
@@ -313,21 +315,7 @@ const app = createApp({
       // While fetching the inventory results, show loading spinner
       this.loading = isLoading
     },
-    test() {
-      this.filtering.zip = 55115;
-      this.filtering.radius = 50;
-      // this.filtering.options = "5AU";
-      // this.fetchInventory();
-    }
-  },
-  computed: {
-    showAdditionalPage() {
-      return this.search.numberOfPages - this.search.pageIndex > 5;
-    },
-    filteringByOption() {
-      return this.filtering.options.length > 0;
-    },
-    pages() {
+    setPages() {
       // [1,2,3,4,5],6,7,8,9
       // 1,2,[3,4,5,6,7],8,9
       // 1,2,3,4,[5,6,7,8,9]
@@ -354,7 +342,21 @@ const app = createApp({
         }
       }
       console.log("Pages", [...pages])
-      return pages;
+      this.search.pages = pages;
+    },
+    test() {
+      this.filtering.zip = 55115;
+      this.filtering.radius = 50;
+      // this.filtering.options = "5AU";
+      // this.fetchInventory();
+    }
+  },
+  computed: {
+    showAdditionalPage() {
+      return this.search.pages[this.search.pages.length - 1] != this.search.numberOfPages
+    },
+    filteringByOption() {
+      return this.filtering.options.length > 0;
     }
   },
   watch: {

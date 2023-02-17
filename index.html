@@ -106,10 +106,12 @@
                                         <div class="spinner-border" role="status" v-if="loading">
                                             <span class="sr-only">Loading...</span>
                                         </div>
-                                        <nav aria-label="Page navigation" v-if="!loading && !filteringByOption && pages.length > 1" style="font-size: 0.9em;">
+                                        <nav aria-label="Page navigation" v-if="!loading && !filteringByOption && search.pages.length > 1" style="font-size: 0.9em;">
                                           <ul class="pagination m-0">
-                                            <li class="page-item" v-for="page in pages"><span class="page-link" @click="changePage(page)">{{ page }}</span></li>
-                                            <!-- <li class="page-item" v-if="showAdditionalPage"><span class="page-link">...</span></li> -->
+                                            <li class="page-item" v-if="search.pageIndex != 1"><span class="page-link" @click="changePage(search.pageIndex-1)"><</span></li>
+                                            <li class="page-item" v-for="page in search.pages"><span class="page-link" @click="changePage(page)" :class="search.pageIndex == page ? 'page-selected' : ''">{{ page }}</span></li>
+                                            <li class="page-item" v-if="showAdditionalPage"><span class="page-link" @click="changePage(search.pages[search.pages.length - 1] + 1)">...</span></li>
+                                            <li class="page-item" v-if="search.pageIndex != search.numberOfPages"><span class="page-link" @click="changePage(search.pageIndex+1)">></span></li>
                                           </ul>
                                         </nav>
                                     </div>

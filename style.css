@@ -84,7 +84,7 @@ a {
 }
 
 .search-container {
-    background: white;
+    background: #d9d9d9d6;
     border-top: 1px solid #cacaca;
     box-shadow: white 0px -15px 10px -5px;
 }
@@ -117,11 +117,17 @@ a {
 }
 
 .page-link {
-    color: #343a40; border-color: #343a40;
+    color: #343a40;
+    border-color: #343a40;
 }
 
 .page-selected {
     background-color: #e9ecef;
+}
+
+.page-link:hover {
+    color: #343a40;
+    border-color: #343a40;
 }
 
 .results-title {
