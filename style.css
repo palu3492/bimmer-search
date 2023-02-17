@@ -64,6 +64,7 @@ a {
 
 .filters-header {
     border-right: none;
+    box-shadow: white 0px 15px 10px -5px;
 }
 
 .filter-header {
