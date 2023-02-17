@@ -65,17 +65,15 @@
                                 </div>
                             </div>
                             <div>
-                                <div v-for="facet in search.facetNames">
-                                    <div :id="'accordion-'+facet" class="mb-3">
-                                      <div class="card">
-                                        <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name-'+facet" data-toggle="collapse" :data-target="'#filter-'+facet" aria-expanded="false" :aria-controls="facet" @click="search.facets[facet].show = !search.facets[facet].show">
+                                      <div class="card mb-3" v-for="facet in search.facetNames">
+                                        <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name-'+facet" data-toggle="collapse" :data-target="'#filter-'+facet" aria-expanded="false" :aria-controls="'filter'+facet" @click="search.facets[facet].show = !search.facets[facet].show">
                                           <span>
                                             {{ facetName(facet) }} {{ filtering.filters[facet].length > 0 ? "*" : ""}}
                                           </span>
                                           <i class="bi bi-caret-right-fill" :style="search.facets[facet].show ? 'transform: rotate(90deg);' : ''"></i>
                                         </div>
 
-                                        <div :id="'filter-'+facet" class="collapse" :aria-labelledby="'#filter-name-'+facet" :data-parent="'#accordion-'+facet">
+                                        <div :id="'filter-'+facet" class="collapse" :aria-labelledby="'filter-name-'+facet">
                                           <div class="card-body filter-body">
                                             <div v-for="value in search.facets[facet]" class="d-flex align-items-baseline">
                                                 <input type="checkbox" v-model="filtering.filters[facet]" :value="value" :disabled="loading">
@@ -84,9 +82,11 @@
                                           </div>
                                         </div>
                                       </div>
-                                  </div>
-                                </div>
                             </div>
+
+
+
+
                             <div class="row position-static search-row" style="position: fixed; bottom: 0;">
                                 <div class="col-12 col-md-3 col-lg-2 search-container">
                                     <button @click="fetchInventory" class="btn btn-outline-dark search-button my-3" :disabled="loading">Search</button>

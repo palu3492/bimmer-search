@@ -296,7 +296,7 @@ const app = createApp({
             array = array.concat(this.filtering.filters[facet.name])
           }
           // Make facet values unqiue after we've merged our filters into the facet array
-          facetObjects[facet.name] = [...new Set(array)]
+          facetObjects[facet.name] = [...new Set(array)].sort()
           // Update if facet should be shown
           facetObjects[facet.name].show = this.search.facets[facet.name]?.show
           // Array of facets that the UI renders based on
