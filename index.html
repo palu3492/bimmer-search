@@ -70,7 +70,7 @@
                                       <div class="card">
                                         <div class="card-header filter-header d-flex justify-content-between" :id="'filter-name-'+facet" data-toggle="collapse" :data-target="'#filter-'+facet" aria-expanded="false" :aria-controls="facet" @click="search.facets[facet].show = !search.facets[facet].show">
                                           <span>
-                                            {{ facetName(facet) }}
+                                            {{ facetName(facet) }} {{ filtering.filters[facet].length > 0 ? "*" : ""}}
                                           </span>
                                           <i class="bi bi-caret-right-fill" :style="search.facets[facet].show ? 'transform: rotate(90deg);' : ''"></i>
                                         </div>
