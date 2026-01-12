@@ -9,7 +9,8 @@ const app = createApp({
         imageUrl: atob("aHR0cHM6Ly9ibXcuYXNzZXRzLnNoaWZ0ZGlnaXRhbGludmVudG9yeS5jb20vaW1hZ2VzLw=="),
         carFaxUrl: atob("aHR0cHM6Ly93d3cuY2FyZmF4LmNvbS9WZWhpY2xlSGlzdG9yeS9wL1JlcG9ydC5jZng/cGFydG5lcj1TRFRfMCZ2aW49"),
         bmwUrl: atob("aHR0cHM6Ly93d3cuYm13dXNhLmNvbS9jZXJ0aWZpZWQtcHJlb3duZWQtc2VhcmNoLyMvZGV0YWlsLw=="),
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MSIsInVuaXF1ZV9uYW1lIjoiYm13b3BzQGNyaXRpY2FsbWFzcy5jb20iLCJqdGkiOiJlMjhkYTRkNi05MmM1LTQwZDYtYTE0NC1jN2JiZTRkM2NiNDUiLCJpYXQiOjE3NjgyNDE3MjEsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFQSSIsIm5iZiI6MTc2ODI0MTcyMSwiZXhwIjoxNzY4MzI4MTIxLCJpc3MiOiJTaGlmdERpZ2l0YWwifQ.--zlV6E-UxcedwhdNavymWiU19EkKWZ6x9hT6am6ng0"
+        tokenUrl: atob("aHR0cHM6Ly9iaW1tZXItc2VhcmNoLXNlcnZlci5wYWx1MzQ5Mi53b3JrZXJzLmRldi8="),
+        token: ""
       },
       inventory: {
         filtered: [],
@@ -60,23 +61,10 @@ const app = createApp({
   },
   methods: {
     getToken() {
-      let tokenUrl = this.request.url + "token"
-      let username = atob("Qk1XSW52ZW50b3J5QGNyaXRpY2FsbWFzcy5jb20=")
-      let password = atob("MW52M250MHJ5ITIwMjA=")
-      let payload = {
-        "grant_type": "password",
-        "username": username,
-        "password": password
-      }
-      let headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept": "application/json"
-      }
+      let tokenUrl = this.request.tokenUrl
       console.log("Fetching", tokenUrl)
       return axios
-        .post(tokenUrl, payload, {
-          headers: headers
-        })
+        .post(tokenUrl)
         .then(response => {
           // console.log(JSON.stringify(response, null, 4))
           this.request.token = response.data.access_token
@@ -372,11 +360,11 @@ const app = createApp({
     // First get the token to be used for fetching inventory
     //  - If this fails, we'll grab the token during the inventory fetching
     // Then fetch first page of inventory with default filters
-    // this.getToken()
-    //   .then( () => {
-    this.fetchInventory()
+    this.getToken()
+      .then( () => {
+        this.fetchInventory()
         // this.test()
-      // })
+      })
   }
 }).mount("#app")
 
