@@ -9,7 +9,7 @@ const app = createApp({
         imageUrl: atob("aHR0cHM6Ly9ibXcuYXNzZXRzLnNoaWZ0ZGlnaXRhbGludmVudG9yeS5jb20vaW1hZ2VzLw=="),
         carFaxUrl: atob("aHR0cHM6Ly93d3cuY2FyZmF4LmNvbS9WZWhpY2xlSGlzdG9yeS9wL1JlcG9ydC5jZng/cGFydG5lcj1TRFRfMCZ2aW49"),
         bmwUrl: atob("aHR0cHM6Ly93d3cuYm13dXNhLmNvbS9jZXJ0aWZpZWQtcHJlb3duZWQtc2VhcmNoLyMvZGV0YWlsLw=="),
-        token: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MSIsInVuaXF1ZV9uYW1lIjoiYm13b3BzQGNyaXRpY2FsbWFzcy5jb20iLCJqdGkiOiJlMjhkYTRkNi05MmM1LTQwZDYtYTE0NC1jN2JiZTRkM2NiNDUiLCJpYXQiOjE3NjgyNDE3MjEsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFQSSIsIm5iZiI6MTc2ODI0MTcyMSwiZXhwIjoxNzY4MzI4MTIxLCJpc3MiOiJTaGlmdERpZ2l0YWwifQ.--zlV6E-UxcedwhdNavymWiU19EkKWZ6x9hT6am6ng0"
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MSIsInVuaXF1ZV9uYW1lIjoiYm13b3BzQGNyaXRpY2FsbWFzcy5jb20iLCJqdGkiOiJlMjhkYTRkNi05MmM1LTQwZDYtYTE0NC1jN2JiZTRkM2NiNDUiLCJpYXQiOjE3NjgyNDE3MjEsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFQSSIsIm5iZiI6MTc2ODI0MTcyMSwiZXhwIjoxNzY4MzI4MTIxLCJpc3MiOiJTaGlmdERpZ2l0YWwifQ.--zlV6E-UxcedwhdNavymWiU19EkKWZ6x9hT6am6ng0"
       },
       inventory: {
         filtered: [],
