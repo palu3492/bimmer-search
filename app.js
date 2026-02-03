@@ -56,7 +56,8 @@ const app = createApp({
         },
         facetOrder: ["Odometer", "Price", "Year", "Series", "Model", "Option", "ExteriorColor", "InteriorColor", "Upholstery", "Drivetrain", "Transmission", "BodyStyle", "FuelType"]
       },
-      formatter: new Intl.NumberFormat()
+      formatter: new Intl.NumberFormat(),
+      vehiclePhotoIndex: {} // vin -> current photo index
     }
   },
   methods: {
@@ -162,6 +163,7 @@ const app = createApp({
       // filtering by option code
       this.setLoading(true);
       this.search.pageIndex = 0 // Reset back to zero
+      this.vehiclePhotoIndex = {} // Reset photo index when user searches
       // If filtering by option code then fetch max page size
       if(this.filteringByOption) {
         this.search.pageSize = 100
@@ -222,11 +224,43 @@ const app = createApp({
       this.setPages()
     },
     vehicleImage(vehicle) {
-      // Return the vehicle iamge URL for a vehicle object
-      if(!vehicle.photos || vehicle.photos.length == 0) {
-        return ""
-      }
+      if (!vehicle.photos || vehicle.photos.length === 0) return ""
       return this.request.imageUrl + vehicle.photos[0]
+    },
+    // Valid indices: 0, then 2..length-10 (skip 2nd photo and last 9)
+    // The 2nd and last 8 photos are dealership photos
+    validPhotoIndices(vehicle) {
+      if (!vehicle.photos || vehicle.photos.length === 0) return []
+      const L = vehicle.photos.length
+      const valid = [0]
+      for (let i = 2; i <= L - 10; i++) valid.push(i)
+      return valid
+    },
+    getVehiclePhotoIndex(vehicle) {
+      const valid = this.validPhotoIndices(vehicle)
+      const pos = this.vehiclePhotoIndex[vehicle.vin] || 0
+      return Math.min(Math.max(0, pos), Math.max(0, valid.length - 1))
+    },
+    getDisplayPhotoIndex(vehicle) {
+      const valid = this.validPhotoIndices(vehicle)
+      const pos = this.getVehiclePhotoIndex(vehicle)
+      return valid[pos] ?? 0
+    },
+    setVehiclePhotoIndex(vehicle, index) {
+      this.vehiclePhotoIndex[vehicle.vin] = index
+    },
+    prevPhoto(vehicle) {
+      const i = this.getVehiclePhotoIndex(vehicle)
+      if (i > 0) this.setVehiclePhotoIndex(vehicle, i - 1)
+    },
+    nextPhoto(vehicle) {
+      const valid = this.validPhotoIndices(vehicle)
+      const i = this.getVehiclePhotoIndex(vehicle)
+      if (i < valid.length - 1) this.setVehiclePhotoIndex(vehicle, i + 1)
+    },
+    vehicleImageAt(vehicle, index) {
+      if (!vehicle.photos || vehicle.photos[index] == null) return ""
+      return this.request.imageUrl + vehicle.photos[index]
     },
     formatNumber(number) {
       // Adds commas where needed in numbers, i.e. 30000 = 30,000

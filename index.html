@@ -132,7 +132,13 @@
                         </div>
                         <div class="card-layout d-flex flex-row flex-wrap">
                             <div class="card vehicle-card" v-for="vehicle in inventory.filtered" :key="vehicle.vin">
-                                <img class="card-img-top" :src="vehicleImage(vehicle)" alt="Vehicle image">
+                                <div class="vehicle-photo-wrap position-relative">
+                                    <img class="card-img-top" :src="vehicleImageAt(vehicle, getDisplayPhotoIndex(vehicle))" alt="Vehicle image">
+                                    <template v-if="validPhotoIndices(vehicle).length > 1">
+                                        <button v-if="getVehiclePhotoIndex(vehicle) > 0" type="button" class="btn btn-sm photo-arrow photo-arrow-left" @click="prevPhoto(vehicle)" aria-label="Previous photo"><i class="bi bi-chevron-left"></i></button>
+                                        <button v-if="getVehiclePhotoIndex(vehicle) < validPhotoIndices(vehicle).length - 1" type="button" class="btn btn-sm photo-arrow photo-arrow-right" @click="nextPhoto(vehicle)" aria-label="Next photo"><i class="bi bi-chevron-right"></i></button>
+                                    </template>
+                                </div>
                                 <div class="card-body">
                                     <div class="card-title d-flex justify-content-between">
                                         <div>
