@@ -132,38 +132,38 @@
                         </div>
                         <div class="card-layout d-flex flex-row flex-wrap">
                             <div class="card vehicle-card" v-for="vehicle in inventory.filtered" :key="vehicle.vin">
-                                <div class="vehicle-photo-wrap position-relative">
-                                    <img class="card-img-top" :src="vehicleImageAt(vehicle, getDisplayPhotoIndex(vehicle))" alt="Vehicle image">
-                                    <template v-if="validPhotoIndices(vehicle).length > 1">
-                                        <button v-if="getVehiclePhotoIndex(vehicle) > 0" type="button" class="btn btn-sm photo-arrow photo-arrow-left" @click="prevPhoto(vehicle)" aria-label="Previous photo"><i class="bi bi-chevron-left"></i></button>
-                                        <button v-if="getVehiclePhotoIndex(vehicle) < validPhotoIndices(vehicle).length - 1" type="button" class="btn btn-sm photo-arrow photo-arrow-right" @click="nextPhoto(vehicle)" aria-label="Next photo"><i class="bi bi-chevron-right"></i></button>
-                                    </template>
-                                </div>
-                                <div class="card-body">
-                                    <div class="card-title d-flex justify-content-between">
-                                        <div>
-                                            <a :href="request.bmwUrl + vehicle.vin" target="_blank">
-                                                <h5 class="vehicle-title">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.modelSeries }}</h5>
-                                            </a>
-                                            <p class="m-0 vehicle-desc">{{ vehicle.modelDescription }}</p>
-                                        </div>
-                                        <div v-if="vehicle.isCarFax" class="carfax">
-                                            <a :href="request.carFaxUrl + vehicle.vin" target="_blank" class="d-flex flex-column text-right">
-                                                <image height="16" src="carfax.png"></image>
-                                                <p class="m-0" style="float: right;" v-if="!vehicle.carFaxNumOwners.isNaN && vehicle.carFaxNumOwners > 0">
-                                                    {{ vehicle.carFaxNumOwners }}-owner
-                                                </p>
-                                            </a>
-                                        </div>
+                                <div class="vehicle-card-clickable" @click="openVehicleModal(vehicle)">
+                                    <div class="vehicle-photo-wrap position-relative">
+                                        <img class="card-img-top" :src="vehicleImageAt(vehicle, getDisplayPhotoIndex(vehicle))" alt="Vehicle image">
+                                        <template v-if="validPhotoIndices(vehicle).length > 1">
+                                            <button v-if="getVehiclePhotoIndex(vehicle) > 0" type="button" class="btn btn-sm photo-arrow photo-arrow-left" @click.stop="prevPhoto(vehicle)" aria-label="Previous photo"><i class="bi bi-chevron-left"></i></button>
+                                            <button v-if="getVehiclePhotoIndex(vehicle) < validPhotoIndices(vehicle).length - 1" type="button" class="btn btn-sm photo-arrow photo-arrow-right" @click.stop="nextPhoto(vehicle)" aria-label="Next photo"><i class="bi bi-chevron-right"></i></button>
+                                        </template>
                                     </div>
-                                    <div class="card-text vehicle-info">
-                                        <div>
-                                            <p>Dealer Price</p>
-                                            <p>${{ formatNumber(vehicle.internetPrice) }}</p>
+                                    <div class="card-body">
+                                        <div class="card-title d-flex justify-content-between">
+                                            <div>
+                                                <h5 class="vehicle-title">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.modelSeries }}</h5>
+                                                <p class="m-0 vehicle-desc">{{ vehicle.modelDescription }}</p>
+                                            </div>
+                                            <div v-if="vehicle.isCarFax" class="carfax">
+                                                <a :href="request.carFaxUrl + vehicle.vin" target="_blank" class="d-flex flex-column text-right" @click.stop>
+                                                    <image height="16" src="carfax.png"></image>
+                                                    <p class="m-0" style="float: right;" v-if="!vehicle.carFaxNumOwners.isNaN && vehicle.carFaxNumOwners > 0">
+                                                        {{ vehicle.carFaxNumOwners }}-owner
+                                                    </p>
+                                                </a>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p>Miles</p>
-                                            <p>{{ formatNumber(vehicle.odometer) }}</p>
+                                        <div class="card-text vehicle-info">
+                                            <div>
+                                                <p>Dealer Price</p>
+                                                <p>${{ formatNumber(vehicle.internetPrice) }}</p>
+                                            </div>
+                                            <div>
+                                                <p>Miles</p>
+                                                <p>{{ formatNumber(vehicle.odometer) }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -175,6 +175,65 @@
                                         </div>
                                     </a>
                                     <small v-if="vehicle.type == 'CPO'" class="certified">Certified</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vehicle info modal (inside #app so Vue controls it) -->
+                <div class="modal fade" :class="{ show: selectedVehicle }" :style="selectedVehicle ? 'display: block;' : ''" tabindex="-1" role="dialog" :aria-hidden="selectedVehicle ? 'false' : 'true'">
+                    <div class="modal-backdrop fade" :class="{ show: selectedVehicle }" @click="closeVehicleModal"></div>
+                    <div class="modal-dialog modal-dialog-centered vehicle-modal-dialog" role="document" @click.stop>
+                        <div class="modal-content" v-if="selectedVehicle">
+                            <div class="modal-body p-0">
+                                <!-- Full-width image with nav -->
+                                <div class="vehicle-modal-photo position-relative">
+                                    <img class="vehicle-modal-img" :src="vehicleImageAt(selectedVehicle, getModalDisplayPhotoIndex())" alt="Vehicle image">
+                                    <button type="button" class="btn btn-sm photo-info-btn vehicle-modal-close" aria-label="Close" @click="closeVehicleModal"><i class="bi bi-x-lg"></i></button>
+                                    <template v-if="validPhotoIndices(selectedVehicle).length > 1">
+                                        <button v-if="modalPhotoIndex > 0" type="button" class="btn btn-sm photo-arrow photo-arrow-left" @click="prevModalPhoto()" aria-label="Previous photo"><i class="bi bi-chevron-left"></i></button>
+                                        <button v-if="modalPhotoIndex < validPhotoIndices(selectedVehicle).length - 1" type="button" class="btn btn-sm photo-arrow photo-arrow-right" @click="nextModalPhoto()" aria-label="Next photo"><i class="bi bi-chevron-right"></i></button>
+                                    </template>
+                                </div>
+                                <!-- Details -->
+                                <div class="vehicle-modal-body">
+                                    <div class="vehicle-modal-head">
+                                        <div class="vehicle-modal-head-main">
+                                            <span class="vehicle-modal-title">{{ selectedVehicle.year }} {{ selectedVehicle.make }} {{ selectedVehicle.modelSeries }}</span>
+                                            <p class="vehicle-modal-desc">{{ selectedVehicle.modelDescription }}</p>
+                                        </div>
+                                        <div v-if="selectedVehicle.isCarFax" class="vehicle-modal-carfax">
+                                            <a :href="request.carFaxUrl + selectedVehicle.vin" target="_blank">
+                                                <img height="16" src="carfax.png" alt="Carfax">
+                                                <span v-if="!selectedVehicle.carFaxNumOwners.isNaN && selectedVehicle.carFaxNumOwners > 0">{{ selectedVehicle.carFaxNumOwners }}-owner</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="vehicle-modal-packages" v-if="vehiclePackages(selectedVehicle).length">
+                                        <span class="vehicle-modal-label">Packages</span>
+                                        <ul class="vehicle-modal-pkg-list">
+                                            <li v-for="pkg in vehiclePackages(selectedVehicle)" :key="pkg">{{ pkg }}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="vehicle-modal-specs" v-if="selectedVehicle.engineDescription || selectedVehicle.fuelType || selectedVehicle.drivetrain || selectedVehicle.exteriorMeta || selectedVehicle.interiorMeta || selectedVehicle.vin">
+                                        <span v-if="selectedVehicle.engineDescription">{{ selectedVehicle.engineDescription }}</span>
+                                        <span v-if="selectedVehicle.fuelType">{{ selectedVehicle.fuelType }}</span>
+                                        <span v-if="selectedVehicle.drivetrain">{{ selectedVehicle.drivetrain }}</span>
+                                        <span v-if="selectedVehicle.exteriorMeta">{{ selectedVehicle.exteriorMeta }}</span>
+                                        <span v-if="selectedVehicle.interiorMeta">{{ selectedVehicle.interiorMeta }}</span>
+                                        <span v-if="selectedVehicle.vin" class="vehicle-modal-vin">VIN {{ selectedVehicle.vin }}</span>
+                                    </div>
+                                    <div class="vehicle-modal-meta">
+                                        <span class="vehicle-modal-meta-item">${{ formatNumber(selectedVehicle.internetPrice) }}</span>
+                                        <span class="vehicle-modal-meta-item">{{ formatNumber(selectedVehicle.odometer) }} mi</span>
+                                        <span class="vehicle-modal-meta-item">{{ dealers.current[selectedVehicle.dealerCode]?.dealerName }}, {{ dealers.current[selectedVehicle.dealerCode]?.state }}</span>
+                                        <span class="vehicle-modal-meta-item">{{ selectedVehicle.distance }} mi away</span>
+                                    </div>
+                                    <div class="vehicle-modal-actions">
+                                        <small v-if="selectedVehicle.type == 'CPO'" class="certified">Certified</small>
+                                        <a :href="selectedVehicle.vdpUrl" target="_blank" class="btn btn-outline-dark btn-sm">View on dealer site</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

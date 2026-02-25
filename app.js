@@ -5,12 +5,10 @@ const app = createApp({
   data() {
     return {
       request: {
-        url: atob("aHR0cHM6Ly9pbnZlbnRvcnlzZXJ2aWNlcy5ibXdkZWFsZXJwcm9ncmFtcy5jb20v"),
         imageUrl: atob("aHR0cHM6Ly9ibXcuYXNzZXRzLnNoaWZ0ZGlnaXRhbGludmVudG9yeS5jb20vaW1hZ2VzLw=="),
         carFaxUrl: atob("aHR0cHM6Ly93d3cuY2FyZmF4LmNvbS9WZWhpY2xlSGlzdG9yeS9wL1JlcG9ydC5jZng/cGFydG5lcj1TRFRfMCZ2aW49"),
         bmwUrl: atob("aHR0cHM6Ly93d3cuYm13dXNhLmNvbS9jZXJ0aWZpZWQtcHJlb3duZWQtc2VhcmNoLyMvZGV0YWlsLw=="),
-        tokenUrl: atob("aHR0cHM6Ly9iaW1tZXItc2VhcmNoLXNlcnZlci5wYWx1MzQ5Mi53b3JrZXJzLmRldi8="),
-        token: ""
+        backendUrl: atob("aHR0cHM6Ly9iaW1tZXItc2VhcmNoLXNlcnZlci5wYWx1MzQ5Mi53b3JrZXJzLmRldi8="),
       },
       inventory: {
         filtered: [],
@@ -57,31 +55,16 @@ const app = createApp({
         facetOrder: ["Odometer", "Price", "Year", "Series", "Model", "Option", "ExteriorColor", "InteriorColor", "Upholstery", "Drivetrain", "Transmission", "BodyStyle", "FuelType"]
       },
       formatter: new Intl.NumberFormat(),
-      vehiclePhotoIndex: {} // vin -> current photo index
+      vehiclePhotoIndex: {}, // vin -> current photo index (cards)
+      modalPhotoIndex: 0, // position in valid list for modal (separate from cards)
+      selectedVehicle: null // vehicle shown in info modal
     }
   },
   methods: {
-    getToken() {
-      let tokenUrl = this.request.tokenUrl
-      console.log("Fetching", tokenUrl)
-      return axios
-        .post(tokenUrl)
-        .then(response => {
-          // console.log(JSON.stringify(response, null, 4))
-          this.request.token = response.data.access_token
-          console.log(this.token)
-        })
-    },
     getInventory(resultsIndex) {
       // Get a page of inventory results
       console.log("Results index", resultsIndex)
-      // Return if no token is set
-      if(this.request.token.length < 10) {
-        console.log("No token")
-        return Promise.resolve()
-      }
       // Set up the body of the request including all filters
-      let auth = "Bearer " + this.request.token
       let payload = {
         "pageIndex": resultsIndex,
         "PageSize": this.search.pageSize,
@@ -97,19 +80,17 @@ const app = createApp({
       }
       let headers = {
         "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": auth // Use the token we fetched earlier
+        "Accept": "application/json"
       }
-      let url = URL + "vehicle"
-      let inventoryUrl = this.request.url + "vehicle"
+      let inventoryUrl = this.request.backendUrl + "vehicle"
       console.log("Fetching", inventoryUrl)
       return axios
         .post(inventoryUrl, payload, {
             headers: headers
         })
         .then(response => {
-          // Once the response has been recieved, process the inventory results
-          // However, nothing will be processed or updated on the UI until all pages of results are recieved
+          // Once the response has been received, process the inventory results
+          // However, nothing will be processed or updated on the UI until all pages of results are received
           this.processInventory(response.data)
           // If we are filtering by option codes and there are more than one page of results, then recursively grab the next page
           let numberOfPages = this.search.numberOfPages
@@ -118,7 +99,7 @@ const app = createApp({
           } else {
             console.log("All results have been fetched")
             console.log("Retrieved", this.inventory.all.length, "vehicles")
-            // Now that all the results have been recived we can process/filter everything
+            // Now that all the results have been received we can process/filter everything
             this.filterAllInventory()
             this.setLoading(false);
           }
@@ -172,19 +153,9 @@ const app = createApp({
       this.inventory.all = []
       // Set the array of filters to search on
       this.setFiltersToSerach()
-      // Ensure token is set
-      let promise = NaN
-      if(this.request.token.length < 10) {
-        console.log("Grabbing token")
-        promise = this.getToken()
-      } else {
-        promise = Promise.resolve()
-      }
       // Fetch inventory starting with first page
       // This call will recursively fetch all inventory results when filtering by option code
-      promise.then(() => {
-        this.getInventory(0)
-      });
+      this.getInventory(0)
     },
     changePage(page) {
       // console.log(page);
@@ -194,7 +165,7 @@ const app = createApp({
       this.getInventory(this.search.pageIndex * this.search.pageSize)
     },
     filterAllInventory() {
-      // Once all the inventory has been recieved from one or more pages, filter down the results is necessary 
+      // Once all the inventory has been received from one or more pages, filter down the results is necessary
       this.search.pageSize = 25
       console.log("Filtering inventory")
       console.log("Options", this.filtering.options)
@@ -261,6 +232,10 @@ const app = createApp({
     vehicleImageAt(vehicle, index) {
       if (!vehicle.photos || vehicle.photos[index] == null) return ""
       return this.request.imageUrl + vehicle.photos[index]
+    },
+    vehiclePackages(vehicle) {
+      if (!vehicle.packageDescriptions || typeof vehicle.packageDescriptions !== 'string') return []
+      return vehicle.packageDescriptions.split('|').map(s => s.trim()).filter(Boolean)
     },
     formatNumber(number) {
       // Adds commas where needed in numbers, i.e. 30000 = 30,000
@@ -368,6 +343,29 @@ const app = createApp({
       console.log("Pages", [...pages])
       this.search.pages = pages;
     },
+    openVehicleModal(vehicle) {
+      this.selectedVehicle = vehicle;
+      this.modalPhotoIndex = this.getVehiclePhotoIndex(vehicle);
+      document.body.style.overflow = 'hidden';
+    },
+    closeVehicleModal() {
+      this.selectedVehicle = null;
+      document.body.style.overflow = '';
+    },
+    getModalDisplayPhotoIndex() {
+      if (!this.selectedVehicle) return 0;
+      const valid = this.validPhotoIndices(this.selectedVehicle);
+      const pos = Math.min(Math.max(0, this.modalPhotoIndex), Math.max(0, valid.length - 1));
+      return valid[pos] ?? 0;
+    },
+    prevModalPhoto() {
+      if (this.modalPhotoIndex > 0) this.modalPhotoIndex--;
+    },
+    nextModalPhoto() {
+      if (!this.selectedVehicle) return;
+      const valid = this.validPhotoIndices(this.selectedVehicle);
+      if (this.modalPhotoIndex < valid.length - 1) this.modalPhotoIndex++;
+    },
     test() {
       this.filtering.zip = 55115;
       this.filtering.radius = 50;
@@ -389,16 +387,7 @@ const app = createApp({
     // }
   },
   mounted() {
-    // Run this when app starts
-    // ============================
-    // First get the token to be used for fetching inventory
-    //  - If this fails, we'll grab the token during the inventory fetching
-    // Then fetch first page of inventory with default filters
-    this.getToken()
-      .then( () => {
-        this.fetchInventory()
-        // this.test()
-      })
+    this.fetchInventory()
   }
 }).mount("#app")
 

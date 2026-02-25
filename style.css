@@ -148,6 +148,10 @@ a {
     width: 100%;
 }
 
+.vehicle-card-clickable {
+    cursor: pointer;
+}
+
 @media (min-width: 768px) {
     .vehicle-card {
         width: calc(50% - calc(15px / 2));
@@ -178,9 +182,10 @@ a {
     background: rgba(0,0,0,0.7);
     color: white;
     border: none;
-    padding: 0.25rem 0.5rem;
+    padding: 0.4rem 0.65rem;
     outline: none;
     box-shadow: none;
+    font-size: 1.1rem;
 }
 
 .photo-arrow:hover,
@@ -202,6 +207,186 @@ a {
 
 .photo-arrow-right {
     right: 0.5rem;
+}
+
+.photo-info-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 2;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    outline: none;
+    box-shadow: none;
+}
+
+.photo-info-btn:hover,
+.photo-info-btn:focus,
+.photo-info-btn:focus-visible {
+    background: rgba(0,0,0,0.85);
+    color: white;
+    outline: none;
+    box-shadow: none;
+}
+
+/* Modal: keep dialog above backdrop when both are inside .modal */
+.modal .modal-dialog {
+    position: relative;
+    z-index: 1050;
+}
+
+.vehicle-modal-dialog {
+    max-width: 1400px;
+    width: 95%;
+}
+
+.vehicle-modal-photo {
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    height: 500px;
+}
+
+.vehicle-modal-photo .photo-arrow {
+    padding: 0.6rem 0.9rem;
+    font-size: 1.5rem;
+}
+
+.vehicle-modal-photo .photo-arrow-left {
+    left: 0.75rem;
+}
+
+.vehicle-modal-photo .photo-arrow-right {
+    right: 0.75rem;
+}
+
+.vehicle-modal-img {
+    width: 100%;
+    height: 500px;
+    display: block;
+    object-fit: contain;
+    object-position: center;
+}
+
+.vehicle-modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+
+.vehicle-modal-body {
+    padding: 1rem 1.25rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.vehicle-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.vehicle-modal-head-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.vehicle-modal-title {
+    display: block;
+    font-family: BMWTypeNext;
+    font-size: 1.1rem;
+    color: black;
+    margin-bottom: 0.2rem;
+}
+
+.vehicle-modal-desc {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.vehicle-modal-carfax {
+    flex-shrink: 0;
+}
+
+.vehicle-modal-carfax a {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.vehicle-modal-packages {
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.vehicle-modal-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.vehicle-modal-pkg-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-weight: normal;
+}
+
+.vehicle-modal-pkg-list li {
+    padding: 0.1rem 0;
+}
+
+.vehicle-modal-specs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0;
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.6rem;
+}
+
+.vehicle-modal-specs span:not(:last-child)::after {
+    content: " · ";
+    margin-left: 0.15rem;
+    margin-right: 0.35rem;
+    color: #999;
+}
+
+.vehicle-modal-vin {
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.vehicle-modal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eee;
+    align-items: baseline;
+}
+
+.vehicle-modal-meta-item {
+    flex-shrink: 0;
+}
+
+.vehicle-modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
 }
 
 .vehicle-title {
